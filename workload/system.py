@@ -102,7 +102,7 @@ class SystemHandler():
     @checkError
     def accumulatedPostTime(self):
         self.system.update_one({"date" : current_dateTime("Date")},
-        {"$inc": {"accumulated_on_post_time" : 1}}, upsert=False)
+        {"$inc": {"accumulated_post_time" : 1}}, upsert=False)
 
     @checkError
     def accumulatedDriveTime(self):
