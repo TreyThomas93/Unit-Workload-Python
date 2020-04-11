@@ -1,6 +1,7 @@
 from assets.errorHandler import checkError
 from assets.currentDatetime import current_dateTime
 from datetime import datetime
+from pprint import pprint
 
 class liveWorkloadHandler():
     
@@ -131,6 +132,8 @@ class liveWorkloadHandler():
                 msg = f"Unit {unit['unit']} Past EOS - {current_dateTime('Time')}"
                 self.notificationList.append(msg)
                 self.system.accumulatedPastEOS()
+            
+            unit["status"] = status
 
     @checkError
     def commitLiveWorkload(self):
