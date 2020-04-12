@@ -97,7 +97,7 @@ class liveWorkloadHandler():
                     elif threshold >= 0.94 and threshold < self.max_threshold:
                         status = "EOS"
 
-                    last_post = current_dateTime("Time")[0:5]
+                    unit["last_post"] = current_dateTime("Time")[0:5]
 
                 else:
                     if threshold < 0.92:
@@ -108,29 +108,29 @@ class liveWorkloadHandler():
                         status = "Fueling"
                     elif threshold >= 0.94 and threshold < self.max_threshold:
                         status = "EOS"
-                    late_call = False
+                    unit["late_call"] = False
 
             else:
                 status = "Past EOS"
 
             if threshold >= 1.5:
                 status = "SOS"
-                workload = 0
-                threshold = 0
+                unit["workload"] = 0
+                unit["threshold"] = 0
 
             if workload >= self.max_threshold and not above_max:
-                above_max = True
+                unit["above_max"] = True
                 msg = f"Unit {unit['unit']} Above Max Threshold - {current_dateTime('Time')}"
                 self.notificationList.append(msg)
 
             if status == "Late Call" and not late_call:
-                late_call = True
+                unit["late_call"] = True
                 msg = f"Unit {unit['unit']} Received Late Call - {current_dateTime('Time')}"
                 self.notificationList.append(msg)
                 self.system.accumulatedLateCalls()
 
             if status == "Past EOS" and not past_eos:
-                past_eos = True
+                unit["past_eos"] = True
                 msg = f"Unit {unit['unit']} Past EOS - {current_dateTime('Time')}"
                 self.notificationList.append(msg)
                 self.system.accumulatedPastEOS()
