@@ -85,7 +85,7 @@ class liveWorkloadHandler():
                         status = "Late Call"
                     else:
                         status = "On Call"
-                    on_call_time+=1
+                    unit["on_call_time"]+=1
                     self.system.accumulatedOnCallTime()
 
                 elif post_time > last_post_time:
@@ -102,7 +102,7 @@ class liveWorkloadHandler():
                 else:
                     if threshold < 0.92:
                         status = "Driving"
-                        drive_time+=1
+                        unit["drive_time"]+=1
                         self.system.accumulatedDriveTime()
                     elif threshold >= 0.92 and threshold < 0.94:
                         status = "Fueling"
