@@ -97,6 +97,7 @@ class CSV():
                                 last_task_time = unitExists["task_time"]
                                 last_post_time = unitExists["post_time"]
                                 last_post = unitExists["last_post"]
+                                last_arrivals = unitExists["arrivals"]
                             else:
                                 status = None
                                 above_max = False
@@ -108,6 +109,7 @@ class CSV():
                                 last_task_time = 0
                                 last_post_time = 0
                                 last_post = 0
+                                last_arrivals = 0
 
                             if unit[0] not in voidUnits:
                                 self.csvData.append({
@@ -131,7 +133,8 @@ class CSV():
                                     "on_call_time" : on_call_time,
                                     "last_task_time" : last_task_time,
                                     "last_post_time" : last_post_time,
-                                    "last_post" : last_post
+                                    "last_post" : last_post,
+                                    "last_arrivals" : last_arrivals
                                 })
         except Exception as e:
             error("CSV File", e)

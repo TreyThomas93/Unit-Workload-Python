@@ -75,6 +75,8 @@ class liveWorkloadHandler():
             post_time = unit["post_time"]
             last_post_time = unit["last_post_time"]
             last_post = unit["last_post"]
+            arrivals = unit["arrivals"]
+            last_arrivals = unit["last_arrivals"]
 
             if threshold < self.max_threshold:
                 
@@ -134,6 +136,9 @@ class liveWorkloadHandler():
                 self.system.accumulatedPastEOS()
             
             unit["status"] = status
+
+            if arrivals > last_arrivals:
+                self.system.accumulatedCalls()
 
     @checkError
     def commitLiveWorkload(self):
