@@ -56,6 +56,7 @@ class Init():
             self.iterationCount = 0
             self.cycle+=1
             self.csv.csvData.clear()
+            notificationList.clear()
 
             print(f"\nCycle {self.cycle} Complete - {current_dateTime()}\n")
         

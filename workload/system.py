@@ -46,7 +46,7 @@ class SystemHandler():
             "log" : None
         }
 
-        return obj
+        self.snapShotObject = obj
 
     @checkError
     def Notify(self, data):
@@ -71,7 +71,9 @@ class SystemHandler():
     def Log(self, data):
         dT = type(data)
 
-        obj = self.snapShot()
+        self.snapShot()
+
+        obj = self.snapShotObject
 
         if dT == list: 
             for msg in data:
