@@ -62,10 +62,12 @@ class SystemHandler():
 
         if dT == str:
             server.sendmail( FROM_EMAIL, TO_EMAIL, data)
+            print(f"[MESSAGE SENT] {data}")
             
         elif dT == list:
             for msg in data:
                 server.sendmail( FROM_EMAIL, TO_EMAIL, msg)
+                print(f"[MESSAGE SENT] {msg}")
 
     @checkError
     def Log(self, data):

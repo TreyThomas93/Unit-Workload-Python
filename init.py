@@ -61,8 +61,9 @@ class Init():
             print(f"\nCycle {self.cycle} Complete - {current_dateTime()}\n")
         
         self.iterationCount+=1
-        if self.iterationCount == 120: # 2 minutes without CSV will send notification
-            msg = "[ALERT] - CSV Undetected For 2 Minutes"
+        if self.iterationCount == 5: # 2 minutes without CSV will send notification
+            # msg = "[ALERT] - CSV Undetected For 2 Minutes"
+            msg = ["THIS IS A TEST FROM RPI4"]
             self.systemHandler.Notify(msg)
 
 if __name__ == "__main__":
