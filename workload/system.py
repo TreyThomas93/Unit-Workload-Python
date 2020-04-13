@@ -92,6 +92,11 @@ class SystemHandler():
             , upsert=False)
 
     @checkError
+    def accumulatedUnits(self):
+        self.system.update_one({"date" : current_dateTime("Date")},
+        {"$inc": {"accumulated_units" : 1}}, upsert=False)
+
+    @checkError
     def accumulatedCalls(self):
         self.system.update_one({"date" : current_dateTime("Date")},
         {"$inc": {"accumulated_calls" : 1}}, upsert=False)

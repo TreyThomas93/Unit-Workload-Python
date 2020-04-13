@@ -152,6 +152,8 @@ class liveWorkloadHandler():
             else:
                 self.liveWorkload.insert_one(unit)
 
+                self.system.accumulatedUnits()
+
                 type = "New"
 
             print(f"Unit {unit['unit']} - Type: {type}")
