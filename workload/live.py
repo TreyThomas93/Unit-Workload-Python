@@ -120,18 +120,18 @@ class liveWorkloadHandler():
 
             if workload >= self.max_threshold and not above_max:
                 unit["above_max"] = True
-                msg = f"Unit {unit['unit']} Above Max Threshold - {current_dateTime('Time')}"
+                msg = f"Unit {unit['unit']} Above Max Threshold"
                 self.notificationList.append(msg)
 
             if status == "Late Call" and not late_call:
                 unit["late_call"] = True
-                msg = f"Unit {unit['unit']} Received Late Call - {current_dateTime('Time')}"
+                msg = f"Unit {unit['unit']} Received Late Call"
                 self.notificationList.append(msg)
                 self.system.accumulatedLateCalls()
 
             if status == "Past EOS" and not past_eos:
                 unit["past_eos"] = True
-                msg = f"Unit {unit['unit']} Past EOS - {current_dateTime('Time')}"
+                msg = f"Unit {unit['unit']} Past EOS"
                 self.notificationList.append(msg)
                 self.system.accumulatedPastEOS()
             

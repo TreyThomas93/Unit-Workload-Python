@@ -53,6 +53,8 @@ class Init():
                 self.systemHandler.Notify(notificationList)
                 self.systemHandler.Log(notificationList)
 
+            self.systemHandler.accumulatedLevelZero(csvData)
+
             self.iterationCount = 0
             self.cycle+=1
             self.csv.csvData.clear()

@@ -80,14 +80,14 @@ class SystemHandler():
         if dT == list: 
             for msg in data:
 
-                obj["log"] = f"{msg}"
+                obj["log"] = f"{msg} - {current_dateTime('Time')}"
 
                 self.system.update_one({"date" : current_dateTime("Date")}, 
                 {"$push" : {"systemLog" : obj}}
                 , upsert=False)
         elif dT == str:
 
-            obj["log"] = f"{data}"
+            obj["log"] = f"{data} - {current_dateTime('Time')}"
 
             self.system.update_one({"date" : current_dateTime("Date")}, 
             {"$push" : {"systemLog" : obj}}
