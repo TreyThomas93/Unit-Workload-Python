@@ -67,6 +67,11 @@ class Init():
             msg = "[ALERT] - CSV Undetected For 2 Minutes"
             self.systemHandler.Notify(msg)
 
+        if self.iterationCount == 600: # 10 minutes then place system data invalid
+            self.system.update_one({"date" : current_dateTime("Date")},
+            {"$set" : {"valid" : False}}, upsert=False)
+            print("[SYSTEM DATA] - Invalid")
+
 if __name__ == "__main__":
     init = Init()
     while True:

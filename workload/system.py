@@ -13,6 +13,7 @@ class SystemHandler():
     def __call__(self):
         foundObj = {
             "date" : current_dateTime("Date"),
+            "valid" : True,
             "accumulated_calls" : 0,
             "accumulated_units" : 0,
             "accumulated_on_call_time" : 0,
@@ -27,8 +28,8 @@ class SystemHandler():
         Found = self.system.find_one({"date" : current_dateTime("Date")})
 
         if not Found:
-            fallOver = self.liveWorkload.count_documents({})
-            foundObj["accumulated_units"] = fallOver
+            rollOver = self.liveWorkload.count_documents({})
+            foundObj["accumulated_units"] = rollOver
             self.system.insert_one(foundObj)
 
     @checkError
