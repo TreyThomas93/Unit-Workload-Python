@@ -118,7 +118,7 @@ class liveWorkloadHandler():
                 unit["workload"] = 0
                 unit["threshold"] = 0
 
-            if workload >= self.max_threshold and not above_max:
+            if unit["workload"] >= self.max_threshold and not above_max:
                 unit["above_max"] = True
                 msg = f"Unit {unit['unit']} Above Max Threshold"
                 self.notificationList.append(msg)
