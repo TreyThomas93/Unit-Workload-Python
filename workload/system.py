@@ -157,7 +157,7 @@ class SystemHandler():
             self.levelCheck = True
 
     @checkError
-    def averageStatus():
+    def averageStatus(self):
         # get averages for all system parameters, then determine if current trend is above/below average.
         systemData = self.system.find({})
 
