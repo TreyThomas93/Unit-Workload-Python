@@ -55,6 +55,8 @@ class Init():
 
             self.systemHandler.accumulatedLevelZero(csvData)
 
+            self.systemHandler.averageStatus()
+
             self.iterationCount = 0
             self.cycle+=1
             self.csv.csvData.clear()
