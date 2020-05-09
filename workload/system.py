@@ -163,140 +163,142 @@ class SystemHandler():
 
         currentHour = current_dateTime("Time").split(":")[0]
 
-        pastCalls = []
-        pastPostTime = []
-        pastOnCallTime = []
-        pastDriveTime = []
-        pastUnits = []
-        pastPastEOS = []
-        pastLateCalls = []
-        pastLevelZero = []
-        currentCalls = 0
-        currentPostTime = 0
-        currentOnCallTime = 0
-        currentDriveTime = 0
-        currentUnits = 0
-        currentPastEOS = 0
-        currentLateCalls = 0
-        currentLevelZero = 0
-        for data in systemData:
-            if data["valid"]:
-                if data["date"] != current_dateTime("Date"):
-                    pastCalls.append(data["accumulated_calls"])
-                    pastPostTime.append(data["accumulated_post_time"])
-                    pastOnCallTime.append(data["accumulated_on_call_time"])
-                    pastDriveTime.append(data["accumulated_drive_time"])
-                    pastUnits.append(data["accumulated_units"])
-                    pastPastEOS.append(data["accumulated_past_eos"])
-                    pastLateCalls.append(data["accumulated_late_calls"])
-                    pastLevelZero.append(data["accumulated_level_zero"])
-                else:
-                    currentCalls = data["accumulated_calls"]
-                    currentPostTime = data["accumulated_post_time"]
-                    currentOnCallTime = data["accumulated_on_call_time"]
-                    currentDriveTime = data["accumulated_drive_time"]
-                    currentUnits = data["accumulated_units"]
-                    currentPastEOS = data["accumulated_past_eos"]
-                    currentLateCalls = data["accumulated_late_calls"]
-                    currentLevelZero = data["accumulated_level_zero"]
+        if currentHour != "00":
 
-        avgPastCalls = round(statistics.mean(pastCalls))
-        avgPastCallsPerHour = avgPastCalls / 24
-        avgCurrentCallsPerHour = currentCalls / int(currentHour)
+            pastCalls = []
+            pastPostTime = []
+            pastOnCallTime = []
+            pastDriveTime = []
+            pastUnits = []
+            pastPastEOS = []
+            pastLateCalls = []
+            pastLevelZero = []
+            currentCalls = 0
+            currentPostTime = 0
+            currentOnCallTime = 0
+            currentDriveTime = 0
+            currentUnits = 0
+            currentPastEOS = 0
+            currentLateCalls = 0
+            currentLevelZero = 0
+            for data in systemData:
+                if data["valid"]:
+                    if data["date"] != current_dateTime("Date"):
+                        pastCalls.append(data["accumulated_calls"])
+                        pastPostTime.append(data["accumulated_post_time"])
+                        pastOnCallTime.append(data["accumulated_on_call_time"])
+                        pastDriveTime.append(data["accumulated_drive_time"])
+                        pastUnits.append(data["accumulated_units"])
+                        pastPastEOS.append(data["accumulated_past_eos"])
+                        pastLateCalls.append(data["accumulated_late_calls"])
+                        pastLevelZero.append(data["accumulated_level_zero"])
+                    else:
+                        currentCalls = data["accumulated_calls"]
+                        currentPostTime = data["accumulated_post_time"]
+                        currentOnCallTime = data["accumulated_on_call_time"]
+                        currentDriveTime = data["accumulated_drive_time"]
+                        currentUnits = data["accumulated_units"]
+                        currentPastEOS = data["accumulated_past_eos"]
+                        currentLateCalls = data["accumulated_late_calls"]
+                        currentLevelZero = data["accumulated_level_zero"]
 
-        avgPastPostTime = round(statistics.mean(pastPostTime))
-        avgPastPostTimePerHour = avgPastPostTime / 24
-        avgCurrentPostTimePerHour = currentPostTime / int(currentHour)
+            avgPastCalls = round(statistics.mean(pastCalls))
+            avgPastCallsPerHour = avgPastCalls / 24
+            avgCurrentCallsPerHour = currentCalls / int(currentHour)
 
-        avgPastOnCallTime = round(statistics.mean(pastOnCallTime))
-        avgPastOnCallTimePerHour = avgPastOnCallTime / 24
-        avgCurrentOnCallTimePerHour = currentOnCallTime / int(currentHour)
+            avgPastPostTime = round(statistics.mean(pastPostTime))
+            avgPastPostTimePerHour = avgPastPostTime / 24
+            avgCurrentPostTimePerHour = currentPostTime / int(currentHour)
 
-        avgPastDriveTime = round(statistics.mean(pastDriveTime))
-        avgPastDriveTimePerHour = avgPastDriveTime / 24
-        avgCurrentDriveTimePerHour = currentDriveTime / int(currentHour)
+            avgPastOnCallTime = round(statistics.mean(pastOnCallTime))
+            avgPastOnCallTimePerHour = avgPastOnCallTime / 24
+            avgCurrentOnCallTimePerHour = currentOnCallTime / int(currentHour)
 
-        avgPastUnits = round(statistics.mean(pastUnits))
-        avgPastUnitsPerHour = avgPastUnits / 24
-        avgCurrentUnitsPerHour = currentUnits / int(currentHour)
+            avgPastDriveTime = round(statistics.mean(pastDriveTime))
+            avgPastDriveTimePerHour = avgPastDriveTime / 24
+            avgCurrentDriveTimePerHour = currentDriveTime / int(currentHour)
 
-        avgPastPastEOS = round(statistics.mean(pastPastEOS))
-        avgPastPastEOSPerHour = avgPastPastEOS / 24
-        avgCurrentPastEOSPerHour = currentPastEOS / int(currentHour)
+            avgPastUnits = round(statistics.mean(pastUnits))
+            avgPastUnitsPerHour = avgPastUnits / 24
+            avgCurrentUnitsPerHour = currentUnits / int(currentHour)
 
-        avgPastLateCalls = round(statistics.mean(pastLateCalls))
-        avgPastLateCallsPerHour = avgPastLateCalls / 24
-        avgCurrentLateCallsPerHour = currentLateCalls / int(currentHour)
+            avgPastPastEOS = round(statistics.mean(pastPastEOS))
+            avgPastPastEOSPerHour = avgPastPastEOS / 24
+            avgCurrentPastEOSPerHour = currentPastEOS / int(currentHour)
 
-        avgPastLevelZero = round(statistics.mean(pastLevelZero))
-        avgPastLevelZeroPerHour = avgPastLevelZero / 24
-        avgCurrentLevelZeroPerHour = currentLevelZero / int(currentHour)
+            avgPastLateCalls = round(statistics.mean(pastLateCalls))
+            avgPastLateCallsPerHour = avgPastLateCalls / 24
+            avgCurrentLateCallsPerHour = currentLateCalls / int(currentHour)
 
-        if avgCurrentCallsPerHour > avgPastCallsPerHour:
-            callStatus = "Above Average"
-        elif avgCurrentCallsPerHour == avgPastCallsPerHour:
-            callStatus = "Average"
-        else:
-            callStatus = "Below Average"
+            avgPastLevelZero = round(statistics.mean(pastLevelZero))
+            avgPastLevelZeroPerHour = avgPastLevelZero / 24
+            avgCurrentLevelZeroPerHour = currentLevelZero / int(currentHour)
 
-        if avgCurrentPostTimePerHour > avgPastPostTimePerHour:
-            postTimeStatus = "Above Average"
-        elif avgCurrentPostTimePerHour == avgPastPostTimePerHour:
-            postTimeStatus = "Average"
-        else:
-            postTimeStatus = "Below Average"
+            if avgCurrentCallsPerHour > avgPastCallsPerHour:
+                callStatus = "Above Average"
+            elif avgCurrentCallsPerHour == avgPastCallsPerHour:
+                callStatus = "Average"
+            else:
+                callStatus = "Below Average"
 
-        if avgCurrentOnCallTimePerHour > avgPastOnCallTimePerHour:
-            onCallStatus = "Above Average"
-        elif avgCurrentOnCallTimePerHour == avgPastOnCallTimePerHour:
-            onCallStatus = "Average"
-        else:
-            onCallStatus = "Below Average"
+            if avgCurrentPostTimePerHour > avgPastPostTimePerHour:
+                postTimeStatus = "Above Average"
+            elif avgCurrentPostTimePerHour == avgPastPostTimePerHour:
+                postTimeStatus = "Average"
+            else:
+                postTimeStatus = "Below Average"
 
-        if avgCurrentDriveTimePerHour > avgPastDriveTimePerHour:
-            driveTimeStatus = "Above Average"
-        elif avgCurrentDriveTimePerHour == avgPastDriveTimePerHour:
-            driveTimeStatus = "Average"
-        else:
-            driveTimeStatus = "Below Average"
+            if avgCurrentOnCallTimePerHour > avgPastOnCallTimePerHour:
+                onCallStatus = "Above Average"
+            elif avgCurrentOnCallTimePerHour == avgPastOnCallTimePerHour:
+                onCallStatus = "Average"
+            else:
+                onCallStatus = "Below Average"
 
-        if avgCurrentUnitsPerHour > avgPastUnitsPerHour:
-            unitStatus = "Above Average"
-        if avgCurrentUnitsPerHour == avgPastUnitsPerHour:
-            unitStatus = "Average"
-        else:
-            unitStatus = "Below Average"
+            if avgCurrentDriveTimePerHour > avgPastDriveTimePerHour:
+                driveTimeStatus = "Above Average"
+            elif avgCurrentDriveTimePerHour == avgPastDriveTimePerHour:
+                driveTimeStatus = "Average"
+            else:
+                driveTimeStatus = "Below Average"
 
-        if avgCurrentPastEOSPerHour > avgPastPastEOSPerHour:
-            pastEOSStatus = "Above Average"
-        elif avgCurrentPastEOSPerHour == avgPastPastEOSPerHour:
-            pastEOSStatus = "Average"
-        else:
-            pastEOSStatus = "Below Average"
+            if avgCurrentUnitsPerHour > avgPastUnitsPerHour:
+                unitStatus = "Above Average"
+            if avgCurrentUnitsPerHour == avgPastUnitsPerHour:
+                unitStatus = "Average"
+            else:
+                unitStatus = "Below Average"
 
-        if avgCurrentLateCallsPerHour > avgPastLateCallsPerHour:
-            lateCallStatus = "Above Average"
-        elif avgCurrentLateCallsPerHour == avgPastLateCallsPerHour:
-            lateCallStatus = "Average"
-        else:
-            lateCallStatus = "Below Average"
+            if avgCurrentPastEOSPerHour > avgPastPastEOSPerHour:
+                pastEOSStatus = "Above Average"
+            elif avgCurrentPastEOSPerHour == avgPastPastEOSPerHour:
+                pastEOSStatus = "Average"
+            else:
+                pastEOSStatus = "Below Average"
 
-        if avgCurrentLevelZeroPerHour > avgPastLevelZeroPerHour:
-            levelZeroStatus = "Above Average"
-        elif avgCurrentLevelZeroPerHour == avgPastLevelZeroPerHour:
-            levelZeroStatus = "Average"
-        else:
-            levelZeroStatus = "Below Average"
+            if avgCurrentLateCallsPerHour > avgPastLateCallsPerHour:
+                lateCallStatus = "Above Average"
+            elif avgCurrentLateCallsPerHour == avgPastLateCallsPerHour:
+                lateCallStatus = "Average"
+            else:
+                lateCallStatus = "Below Average"
 
-        self.system.update_one({"date" : current_dateTime("Date")},
-                        {"$set": 
-                        {"call_status" : callStatus,
-                        "on_call_status" : onCallStatus,
-                        "post_time_status" : postTimeStatus,
-                        "drive_time_status" : driveTimeStatus,
-                        "unit_status" : unitStatus,
-                        "past_eos_status" : pastEOSStatus,
-                        "late_call_status" : lateCallStatus,
-                        "level_zero_status" : levelZeroStatus}
-                        }, 
-                        upsert=False)
+            if avgCurrentLevelZeroPerHour > avgPastLevelZeroPerHour:
+                levelZeroStatus = "Above Average"
+            elif avgCurrentLevelZeroPerHour == avgPastLevelZeroPerHour:
+                levelZeroStatus = "Average"
+            else:
+                levelZeroStatus = "Below Average"
+
+            self.system.update_one({"date" : current_dateTime("Date")},
+                            {"$set": 
+                            {"call_status" : callStatus,
+                            "on_call_status" : onCallStatus,
+                            "post_time_status" : postTimeStatus,
+                            "drive_time_status" : driveTimeStatus,
+                            "unit_status" : unitStatus,
+                            "past_eos_status" : pastEOSStatus,
+                            "late_call_status" : lateCallStatus,
+                            "level_zero_status" : levelZeroStatus}
+                            }, 
+                            upsert=False)
