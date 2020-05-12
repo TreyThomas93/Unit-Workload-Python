@@ -3,6 +3,7 @@ from assets.errorHandler import checkError
 import smtplib
 from pprint import pprint
 import statistics
+from env import FROM_EMAIL, TO_EMAIL, PASSWORD
 
 class SystemHandler():
 
@@ -60,9 +61,6 @@ class SystemHandler():
 
     @checkError
     def Notify(self, data):
-        FROM_EMAIL = "EMSA.Unit.Workload@gmail.com"
-        TO_EMAIL = "9183735921@email.uscc.net"
-        PASSWORD = "Aubree673"
         
         server = smtplib.SMTP( "smtp.gmail.com", 587 )
         server.starttls()

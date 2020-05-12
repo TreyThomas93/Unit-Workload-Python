@@ -62,6 +62,8 @@ class Init():
             self.csv.csvData.clear()
             notificationList.clear()
 
+            os.remove(self.path_to_csv_file)
+
             print(f"\nCycle {self.cycle} Complete - {current_dateTime()}\n")
         
         self.iterationCount+=1
@@ -69,7 +71,7 @@ class Init():
             msg = "[ALERT] - CSV Undetected For 2 Minutes"
             self.systemHandler.Notify(msg)
 
-        if self.iterationCount == 600: # 10 minutes then place system data invalid
+        if self.iterationCount == 1800: # 30 minutes then place system data invalid
             self.system.update_one({"date" : current_dateTime("Date")},
             {"$set" : {"valid" : False}}, upsert=False)
             print("[SYSTEM DATA] - Invalid")

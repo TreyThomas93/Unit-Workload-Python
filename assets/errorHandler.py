@@ -4,7 +4,7 @@ import os
 def checkError(func):
     def wrapper(*args, **kwargs):
         try:
-            func(*args, **kwargs)
+            return func(*args, **kwargs)
         except Exception as e:
             error(func.__name__, e)
 
