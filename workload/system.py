@@ -291,12 +291,20 @@ class SystemHandler():
             self.system.update_one({"date" : current_dateTime("Date")},
                             {"$set": 
                             {"call_status" : callStatus,
+                            "call_average" : avgPastCallsPerHour,
                             "on_call_status" : onCallStatus,
+                            "on_call_average" : avgPastOnCallTimePerHour,
                             "post_time_status" : postTimeStatus,
+                            "post_time_average" : avgPastPostTimePerHour,
                             "drive_time_status" : driveTimeStatus,
+                            "drive_time_average" : avgPastDriveTimePerHour,
                             "unit_status" : unitStatus,
+                            "unit_average" : avgPastUnitsPerHour,
                             "past_eos_status" : pastEOSStatus,
+                            "past_eos_average" : avgPastPastEOSPerHour,
                             "late_call_status" : lateCallStatus,
-                            "level_zero_status" : levelZeroStatus}
+                            "late_call_average" : avgPastLateCallsPerHour,
+                            "level_zero_status" : levelZeroStatus,
+                            "level_zero_average" : avgPastLevelZeroPerHour}
                             }, 
                             upsert=False)
