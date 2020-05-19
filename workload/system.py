@@ -299,7 +299,7 @@ class SystemHandler():
                             "drive_time_status" : driveTimeStatus,
                             "drive_time_average" : round(avgPastDriveTimePerHour * int(currentHour)),
                             "unit_status" : unitStatus,
-                            "unit_average" : round(avgPastUnitsPerHour * int(currentHour)),
+                            "unit_average" : avgPastUnits,
                             "past_eos_status" : pastEOSStatus,
                             "past_eos_average" : round(avgPastPastEOSPerHour * int(currentHour)),
                             "late_call_status" : lateCallStatus,
