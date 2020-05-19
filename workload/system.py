@@ -291,20 +291,20 @@ class SystemHandler():
             self.system.update_one({"date" : current_dateTime("Date")},
                             {"$set": 
                             {"call_status" : callStatus,
-                            "call_average" : (avgPastCallsPerHour * int(currentHour)),
+                            "call_average" : round(avgPastCallsPerHour * int(currentHour)),
                             "on_call_status" : onCallStatus,
-                            "on_call_average" : (avgPastOnCallTimePerHour * int(currentHour)),
+                            "on_call_average" : round(avgPastOnCallTimePerHour * int(currentHour)),
                             "post_time_status" : postTimeStatus,
-                            "post_time_average" : (avgPastPostTimePerHour * int(currentHour)),
+                            "post_time_average" : round(avgPastPostTimePerHour * int(currentHour)),
                             "drive_time_status" : driveTimeStatus,
-                            "drive_time_average" : (avgPastDriveTimePerHour * int(currentHour)),
+                            "drive_time_average" : round(avgPastDriveTimePerHour * int(currentHour)),
                             "unit_status" : unitStatus,
-                            "unit_average" : (avgPastUnitsPerHour * int(currentHour)),
+                            "unit_average" : round(avgPastUnitsPerHour * int(currentHour)),
                             "past_eos_status" : pastEOSStatus,
-                            "past_eos_average" : (avgPastPastEOSPerHour * int(currentHour)),
+                            "past_eos_average" : round(avgPastPastEOSPerHour * int(currentHour)),
                             "late_call_status" : lateCallStatus,
-                            "late_call_average" : (avgPastLateCallsPerHour * int(currentHour)),
+                            "late_call_average" : round(avgPastLateCallsPerHour * int(currentHour)),
                             "level_zero_status" : levelZeroStatus,
-                            "level_zero_average" : (avgPastLevelZeroPerHour * int(currentHour))}
+                            "level_zero_average" : round(avgPastLevelZeroPerHour * int(currentHour))}
                             }, 
                             upsert=False)
