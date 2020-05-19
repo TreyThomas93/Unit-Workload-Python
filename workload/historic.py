@@ -22,6 +22,7 @@ class historicWorkloadHandler():
             task_time = row["task_time"]
             arrivals = row["arrivals"]
             post_time = row["post_time"]
+            late_call = row["late_call"]
             past_eos = row["past_eos"]
 
             # Check For Outdated Unit Data If Unit not in new CSV file data
@@ -52,6 +53,7 @@ class historicWorkloadHandler():
                         "arrivals" : arrivals,
                         "post_time" : post_time,
                         "workload" : workload,
+                        "late_call" : late_call,
                         "past_eos" : past_eos
                     }
 
