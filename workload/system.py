@@ -232,79 +232,23 @@ class SystemHandler():
             avgPastLevelZeroPerHour = avgPastLevelZero / 24
             avgCurrentLevelZeroPerHour = currentLevelZero / int(currentHour)
 
-            if avgCurrentCallsPerHour > avgPastCallsPerHour:
-                callStatus = "Above Average"
-            elif avgCurrentCallsPerHour == avgPastCallsPerHour:
-                callStatus = "Average"
-            else:
-                callStatus = "Below Average"
-
-            if avgCurrentPostTimePerHour > avgPastPostTimePerHour:
-                postTimeStatus = "Above Average"
-            elif avgCurrentPostTimePerHour == avgPastPostTimePerHour:
-                postTimeStatus = "Average"
-            else:
-                postTimeStatus = "Below Average"
-
-            if avgCurrentOnCallTimePerHour > avgPastOnCallTimePerHour:
-                onCallStatus = "Above Average"
-            elif avgCurrentOnCallTimePerHour == avgPastOnCallTimePerHour:
-                onCallStatus = "Average"
-            else:
-                onCallStatus = "Below Average"
-
-            if avgCurrentDriveTimePerHour > avgPastDriveTimePerHour:
-                driveTimeStatus = "Above Average"
-            elif avgCurrentDriveTimePerHour == avgPastDriveTimePerHour:
-                driveTimeStatus = "Average"
-            else:
-                driveTimeStatus = "Below Average"
-
-            if avgCurrentUnitsPerHour > avgPastUnitsPerHour:
-                unitStatus = "Above Average"
-            if avgCurrentUnitsPerHour == avgPastUnitsPerHour:
-                unitStatus = "Average"
-            else:
-                unitStatus = "Below Average"
-
-            if avgCurrentPastEOSPerHour > avgPastPastEOSPerHour:
-                pastEOSStatus = "Above Average"
-            elif avgCurrentPastEOSPerHour == avgPastPastEOSPerHour:
-                pastEOSStatus = "Average"
-            else:
-                pastEOSStatus = "Below Average"
-
-            if avgCurrentLateCallsPerHour > avgPastLateCallsPerHour:
-                lateCallStatus = "Above Average"
-            elif avgCurrentLateCallsPerHour == avgPastLateCallsPerHour:
-                lateCallStatus = "Average"
-            else:
-                lateCallStatus = "Below Average"
-
-            if avgCurrentLevelZeroPerHour > avgPastLevelZeroPerHour:
-                levelZeroStatus = "Above Average"
-            elif avgCurrentLevelZeroPerHour == avgPastLevelZeroPerHour:
-                levelZeroStatus = "Average"
-            else:
-                levelZeroStatus = "Below Average"
-
             self.system.update_one({"date" : current_dateTime("Date")},
                             {"$set": 
-                            {"call_status" : callStatus,
+                            {
                             "call_average" : round(avgPastCallsPerHour * int(currentHour)),
-                            "on_call_status" : onCallStatus,
+                            
                             "on_call_average" : round(avgPastOnCallTimePerHour * int(currentHour)),
-                            "post_time_status" : postTimeStatus,
+                            
                             "post_time_average" : round(avgPastPostTimePerHour * int(currentHour)),
-                            "drive_time_status" : driveTimeStatus,
+                            
                             "drive_time_average" : round(avgPastDriveTimePerHour * int(currentHour)),
-                            "unit_status" : unitStatus,
+                            
                             "unit_average" : avgPastUnits,
-                            "past_eos_status" : pastEOSStatus,
+                            
                             "past_eos_average" : round(avgPastPastEOSPerHour * int(currentHour)),
-                            "late_call_status" : lateCallStatus,
+                            
                             "late_call_average" : round(avgPastLateCallsPerHour * int(currentHour)),
-                            "level_zero_status" : levelZeroStatus,
+                          
                             "level_zero_average" : round(avgPastLevelZeroPerHour * int(currentHour))}
                             }, 
                             upsert=False)

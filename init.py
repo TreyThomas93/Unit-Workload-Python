@@ -47,15 +47,15 @@ class Init():
             print("\n[HANDLING HISTORIC WORKLOAD]")
             self.historicWorkloadHandler.checkOutdated(csvData)
 
+            self.systemHandler.accumulatedLevelZero(csvData)
+
+            self.systemHandler.averageStatus()
+
             notificationList = self.liveWorkloadHandler.notificationList
             if len(notificationList) > 0:
                 print(f"[NOTIFY/LOG] - {len(notificationList)} EVENTS")
                 self.systemHandler.Notify(notificationList)
                 self.systemHandler.Log(notificationList)
-
-            self.systemHandler.accumulatedLevelZero(csvData)
-
-            self.systemHandler.averageStatus()
 
             self.iterationCount = 0
             self.cycle+=1
