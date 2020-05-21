@@ -219,6 +219,7 @@ class SystemHandler():
             avgPastUnits = round(statistics.mean(pastUnits))
             avgPastUnitsPerHour = avgPastUnits / 24
             avgCurrentUnitsPerHour = currentUnits / int(currentHour)
+            currentUnitAverage = avgPastUnitsPerHour * int(currentHour)
 
             avgPastPastEOS = round(statistics.mean(pastPastEOS))
             avgPastPastEOSPerHour = avgPastPastEOS / 24
@@ -243,7 +244,7 @@ class SystemHandler():
                             
                             "drive_time_average" : round(avgPastDriveTimePerHour * int(currentHour)),
                             
-                            "unit_average" : avgPastUnits,
+                            "unit_average" : currentUnitAverage,
                             
                             "past_eos_average" : round(avgPastPastEOSPerHour * int(currentHour)),
                             
