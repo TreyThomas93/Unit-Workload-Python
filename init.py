@@ -93,7 +93,7 @@ class Init():
 
     @checkError
     def startUpTestMessage(self):
-        msg = "This is a test message from the raspberry pi 4"
+        msg = "This is a test message from the raspberry pi 4 - Main"
         self.systemHandler.Notify(msg)
 
 if __name__ == "__main__":
