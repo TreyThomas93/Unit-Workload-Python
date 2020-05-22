@@ -66,10 +66,10 @@ class Init():
             notificationList = self.liveWorkloadHandler.notificationList
             if len(notificationList) > 0:
                 print(f"[NOTIFY/LOG] - {len(notificationList)} EVENTS")
-                # self.systemHandler.Notify(notificationList)
-                # self.systemHandler.Log(notificationList)
-                threading.Thread(target=self.systemHandler.Notify, args=(notificationList,)).start()
-                threading.Thread(target=self.systemHandler.Log, args=(notificationList,)).start()
+                self.systemHandler.Notify(notificationList)
+                self.systemHandler.Log(notificationList)
+                # threading.Thread(target=self.systemHandler.Notify, args=(notificationList,)).start()
+                # threading.Thread(target=self.systemHandler.Log, args=(notificationList,)).start()
 
             self.iterationCount = 0
             self.cycle+=1
@@ -83,8 +83,8 @@ class Init():
         self.iterationCount+=1
         if self.iterationCount == 120: # 2 minutes without CSV will send notification
             msg = "[ALERT] - CSV Undetected For 2 Minutes"
-            threading.Thread(target=self.systemHandler.Notify, args=(msg,)).start()
-            # self.systemHandler.Notify(msg)
+            # threading.Thread(target=self.systemHandler.Notify, args=(msg,)).start()
+            self.systemHandler.Notify(msg)
 
         if self.iterationCount == 1800: # 30 minutes then place system data invalid
             self.system.update_one({"date" : current_dateTime("Date")},
