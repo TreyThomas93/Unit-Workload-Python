@@ -4,12 +4,14 @@ import smtplib
 from pprint import pprint
 import statistics
 from env import FROM_EMAIL, TO_EMAIL, PASSWORD
+import datetime
 
 class SystemHandler():
 
-    def __init__(self, system, liveWorkload):
+    def __init__(self, system, liveWorkload, historicWorkload):
         self.system = system
         self.liveWorkload = liveWorkload
+        self.historicWorkload = historicWorkload
         self.levelCheck = True
 
     def __call__(self):
@@ -24,14 +26,6 @@ class SystemHandler():
             "accumulated_past_eos" : 0,
             "accumulated_late_calls" : 0,
             "accumulated_level_zero" : 0,
-            "call_status" : None,
-            "on_call_status" : None,
-            "post_time_status" : None,
-            "drive_time_status" : None,
-            "unit_status" : None,
-            "past_eos_status" : None,
-            "late_call_status" : None,
-            "level_zero_status" : None,
             "systemLog" : []
         }
 
@@ -252,3 +246,41 @@ class SystemHandler():
                             "level_zero_average" : round(avgPastLevelZeroPerHour * int(currentHour))}
                             }, 
                             upsert=False)
+
+    @checkError
+    def offOnTimePercentage(self):
+        # GET WEEKLY OFF ON TIME PERCENTAGE
+
+        theday = datetime.date.today()
+        weekday = theday.isoweekday()
+        # The start of the week
+        start = theday - datetime.timedelta(days=weekday)
+        # build a simple range
+        dates = [start + datetime.timedelta(days=d) for d in range(7)]
+
+        dates = [datetime.datetime.strftime(d, "%m/%d/%y") for d in dates]
+
+        historicWorkload = self.historicWorkload.find({})
+
+        PastEOS = 0
+        totalCrews = 0
+
+        for data in historicWorkload:
+            if data["date"] in dates:
+                totalCrews+=1
+                try:
+                    if data["past_eos"] and data["late_call"]:
+                        PastEOS+=1
+                except Exception as e:
+                    pass
+
+        offOnTime = 100 - round((PastEOS / totalCrews) * 100) 
+
+        dateRange = f"{dates[0]} - {dates[-1]}"      
+
+        self.system.update_one({"date" : current_dateTime("Date")}, {
+            "$set" : {"weeklyoffontime" : {
+                "daterange" : dateRange,
+                "offontimepercentage" : offOnTime
+            }}
+        }, upsert=False) 

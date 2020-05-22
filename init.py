@@ -24,7 +24,7 @@ class Init():
         self.historicWorkload = self.mongo.historicWorkload
         self.shiftAverage = self.mongo.shiftAverage
         self.system = self.mongo.system
-        self.systemHandler = SystemHandler(self.system, self.liveWorkload)
+        self.systemHandler = SystemHandler(self.system, self.liveWorkload, self.historicWorkload)
 
         self.csv = CSV(self.path_to_csv_file, self.liveWorkload)
         self.liveWorkloadHandler = liveWorkloadHandler(self.systemHandler)
@@ -50,6 +50,8 @@ class Init():
             self.systemHandler.accumulatedLevelZero(csvData)
 
             self.systemHandler.averageStatus()
+
+            self.systemHandler.offOnTimePercentage()
 
             notificationList = self.liveWorkloadHandler.notificationList
             if len(notificationList) > 0:
