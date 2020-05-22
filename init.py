@@ -91,8 +91,14 @@ class Init():
             {"$set" : {"valid" : False}}, upsert=False)
             print("[SYSTEM DATA] - Invalid")
 
+    @checkError
+    def startUpTestMessage(self):
+        msg = "This is a test message from the raspberry pi 4"
+        self.systemHandler.Notify(msg)
+
 if __name__ == "__main__":
     init = Init()
+    init.startUpTestMessage()
     while True:
         init.listen()
         time.sleep(1)
