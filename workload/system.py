@@ -276,7 +276,7 @@ class SystemHandler():
 
         offOnTime = 100 - round((PastEOS / totalCrews) * 100) 
 
-        dateRange = f"{dates[0]} - {current_dateTime("Date")}"      
+        dateRange = f"{dates[0]} - {current_dateTime('Date')}"      
 
         self.system.update_one({"date" : current_dateTime("Date")}, {
             "$set" : {"weeklyoffontime" : {
