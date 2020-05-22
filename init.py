@@ -7,6 +7,7 @@ from pprint import pprint
 from workload.system import SystemHandler
 from assets.currentDatetime import current_dateTime
 from assets.errorHandler import checkError
+import threading
 
 class Init():
 
@@ -23,8 +24,9 @@ class Init():
         self.liveWorkload = self.mongo.liveWorkload
         self.historicWorkload = self.mongo.historicWorkload
         self.shiftAverage = self.mongo.shiftAverage
+        self.hourlyUnitAverage = self.mongo.hourlyUnitAverage
         self.system = self.mongo.system
-        self.systemHandler = SystemHandler(self.system, self.liveWorkload, self.historicWorkload)
+        self.systemHandler = SystemHandler(self.system, self.liveWorkload, self.historicWorkload, self.hourlyUnitAverage)
 
         self.csv = CSV(self.path_to_csv_file, self.liveWorkload)
         self.liveWorkloadHandler = liveWorkloadHandler(self.systemHandler)
@@ -45,19 +47,29 @@ class Init():
             self.liveWorkloadHandler.commitLiveWorkload()
 
             print("\n[HANDLING HISTORIC WORKLOAD]")
-            self.historicWorkloadHandler.checkOutdated(csvData)
+            # self.historicWorkloadHandler.checkOutdated(csvData)
 
-            self.systemHandler.accumulatedLevelZero(csvData)
+            # self.systemHandler.accumulatedLevelZero(csvData)
 
-            self.systemHandler.averageStatus()
+            # self.systemHandler.averageStatus()
 
-            self.systemHandler.offOnTimePercentage()
+            # self.systemHandler.offOnTimePercentage()
+
+            # self.systemHandler.HourlyUnitAverage()
+
+            threading.Thread(target=self.historicWorkloadHandler.checkOutdated, args=(csvData,)).start()
+            threading.Thread(target=self.systemHandler.accumulatedLevelZero, args=(csvData,)).start()
+            threading.Thread(target=self.systemHandler.averageStatus).start()
+            threading.Thread(target=self.systemHandler.offOnTimePercentage).start()
+            threading.Thread(target=self.systemHandler.HourlyUnitAverage).start()
 
             notificationList = self.liveWorkloadHandler.notificationList
             if len(notificationList) > 0:
                 print(f"[NOTIFY/LOG] - {len(notificationList)} EVENTS")
-                self.systemHandler.Notify(notificationList)
-                self.systemHandler.Log(notificationList)
+                # self.systemHandler.Notify(notificationList)
+                # self.systemHandler.Log(notificationList)
+                threading.Thread(target=self.systemHandler.Notify, args=(notificationList,)).start()
+                threading.Thread(target=self.systemHandler.Log, args=(notificationList,)).start()
 
             self.iterationCount = 0
             self.cycle+=1
@@ -71,7 +83,8 @@ class Init():
         self.iterationCount+=1
         if self.iterationCount == 120: # 2 minutes without CSV will send notification
             msg = "[ALERT] - CSV Undetected For 2 Minutes"
-            self.systemHandler.Notify(msg)
+            threading.Thread(target=self.systemHandler.Notify, args=(msg,)).start()
+            # self.systemHandler.Notify(msg)
 
         if self.iterationCount == 1800: # 30 minutes then place system data invalid
             self.system.update_one({"date" : current_dateTime("Date")},
@@ -83,4 +96,5 @@ if __name__ == "__main__":
     while True:
         init.listen()
         time.sleep(1)
+        # break
 

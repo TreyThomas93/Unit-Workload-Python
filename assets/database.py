@@ -11,6 +11,7 @@ class mongoDatabase():
             self.historicWorkload = self.db["historicWorkload"]
             self.system = self.db["System"]
             self.shiftAverage = self.db["shiftAverage"]
+            self.hourlyUnitAverage = self.db["hourlyUnitAverage"]
 
     def connect(self):
         try:

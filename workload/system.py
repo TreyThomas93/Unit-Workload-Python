@@ -1,6 +1,8 @@
 from assets.currentDatetime import current_dateTime
 from assets.errorHandler import checkError
 import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from pprint import pprint
 import statistics
 from env import FROM_EMAIL, TO_EMAIL, PASSWORD
@@ -8,10 +10,11 @@ import datetime
 
 class SystemHandler():
 
-    def __init__(self, system, liveWorkload, historicWorkload):
+    def __init__(self, system, liveWorkload, historicWorkload, hourlyUnitAverage):
         self.system = system
         self.liveWorkload = liveWorkload
         self.historicWorkload = historicWorkload
+        self.hourlyUnitAverage = hourlyUnitAverage
         self.levelCheck = True
 
     def __call__(self):
@@ -63,13 +66,29 @@ class SystemHandler():
         dT = type(data)
 
         if dT == str:
-            server.sendmail( FROM_EMAIL, TO_EMAIL, data)
+            # server.sendmail( FROM_EMAIL, TO_EMAIL, data)
+            msg = MIMEMultipart()  # create a message
+            msg['From'] = FROM_EMAIL
+            msg['To'] = TO_EMAIL
+            msg['Subject'] = "[SYSTEM ALERT]"
+            msg.attach(MIMEText(data, 'plain'))
+            server.send_message(msg)
+            del msg
             print(f"[MESSAGE SENT] {data}")
             
         elif dT == list:
-            for msg in data:
-                server.sendmail( FROM_EMAIL, TO_EMAIL, msg)
-                print(f"[MESSAGE SENT] {msg}")
+            for message in data:
+                # server.sendmail( FROM_EMAIL, TO_EMAIL, message)
+                msg = MIMEMultipart()  # create a message
+                msg['From'] = FROM_EMAIL
+                msg['To'] = TO_EMAIL
+                msg['Subject'] = "[SYSTEM ALERT]"
+                msg.attach(MIMEText(data, 'plain'))
+                server.send_message(msg)
+                del msg
+                print(f"[MESSAGE SENT] {message}")
+
+        server.quit()
 
     @checkError
     def Log(self, data):
@@ -284,3 +303,33 @@ class SystemHandler():
                 "offontimepercentage" : offOnTime
             }}
         }, upsert=False) 
+
+    @checkError
+    def HourlyUnitAverage(self):
+
+        unitAverage = self.hourlyUnitAverage.find_one({"date" : current_dateTime("Date")})
+
+        if not unitAverage:
+            self.hourlyUnitAverage.insert_one({
+                "date" : current_dateTime("Date"),
+                "unitHours" : []
+            })
+        else:
+            cT = current_dateTime("Time").split(":")[0]
+
+            unitHours = unitAverage["unitHours"]
+
+            unitCount = self.liveWorkload.find({}).count()
+
+            if len(unitHours) > 0:
+                for item in unitHours:
+                    if cT not in item:
+                        self.hourlyUnitAverage.update_one({"date" : current_dateTime("Date")}, {
+                            "$push" : { "unitHours" : { cT : unitCount } }
+                        })
+            else:
+                self.hourlyUnitAverage.update_one({"date" : current_dateTime("Date")}, {
+                    "$push" : { "unitHours" : { cT : unitCount } }
+                })
+                    
+        
