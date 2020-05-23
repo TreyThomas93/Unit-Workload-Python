@@ -35,6 +35,7 @@ class Init():
     @checkError 
     def listen(self):
         if os.path.exists(self.path_to_csv_file):
+            start = time.perf_counter
             print("[CSV FILE FOUND]\n")
             self.csv.csvFile()
             csvData = self.csv.csvData
@@ -46,30 +47,30 @@ class Init():
             self.liveWorkloadHandler.unitStatus()
             self.liveWorkloadHandler.commitLiveWorkload()
 
-            print("\n[HANDLING HISTORIC WORKLOAD]")
-            # self.historicWorkloadHandler.checkOutdated(csvData)
-
-            # self.systemHandler.accumulatedLevelZero(csvData)
-
-            # self.systemHandler.averageStatus()
-
-            # self.systemHandler.offOnTimePercentage()
-
-            # self.systemHandler.HourlyUnitAverage()
-
-            threading.Thread(target=self.historicWorkloadHandler.checkOutdated, args=(csvData,)).start()
-            threading.Thread(target=self.systemHandler.accumulatedLevelZero, args=(csvData,)).start()
-            threading.Thread(target=self.systemHandler.averageStatus).start()
-            threading.Thread(target=self.systemHandler.offOnTimePercentage).start()
-            threading.Thread(target=self.systemHandler.HourlyUnitAverage).start()
-
             notificationList = self.liveWorkloadHandler.notificationList
             if len(notificationList) > 0:
                 print(f"[NOTIFY/LOG] - {len(notificationList)} EVENTS")
                 self.systemHandler.Notify(notificationList)
                 self.systemHandler.Log(notificationList)
-                # threading.Thread(target=self.systemHandler.Notify, args=(notificationList,)).start()
-                # threading.Thread(target=self.systemHandler.Log, args=(notificationList,)).start()
+
+            print("\n[HANDLING HISTORIC WORKLOAD]")
+            t1 = threading.Thread(target=self.historicWorkloadHandler.checkOutdated, args=(csvData,))
+            t2 = threading.Thread(target=self.systemHandler.accumulatedLevelZero, args=(csvData,))
+            t3 = threading.Thread(target=self.systemHandler.averageStatus)
+            t4 = threading.Thread(target=self.systemHandler.offOnTimePercentage)
+            t5 = threading.Thread(target=self.systemHandler.HourlyUnitAverage)
+
+            t1.start()
+            t2.start()
+            t3.start()
+            t4.start()
+            t5.start()
+
+            # t1.join()
+            # t2.join()
+            # t3.join()
+            # t4.join()
+            # t5.join()
 
             self.iterationCount = 0
             self.cycle+=1
@@ -78,7 +79,9 @@ class Init():
 
             os.remove(self.path_to_csv_file)
 
-            print(f"\nCycle {self.cycle} Complete - {current_dateTime()}\n")
+            end = time.perf_counter
+
+            print(f"\nCycle {self.cycle} Complete - {current_dateTime()} - Took {round(end-start, 2)} second(s)\n")
         
         self.iterationCount+=1
         if self.iterationCount == 120: # 2 minutes without CSV will send notification

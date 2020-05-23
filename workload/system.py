@@ -322,16 +322,12 @@ class SystemHandler():
             unitCount = self.liveWorkload.find({}).count()
 
             if len(unitHours) > 0:
-                print("ABOVE ABOVE")
                 if not any(i['time'] == f"{cT}:00" for i in unitHours):
-                    print(cT)
-                    print("Above")
                     self.hourlyUnitAverage.update_one({"date" : current_dateTime("Date")}, {
                         "$push" : { "unitHours" : { "time" : f"{cT}:00", 
                         "unitCount" : unitCount } }
                     })
             else:
-                print("BELOW BELOW")
                 self.hourlyUnitAverage.update_one({"date" : current_dateTime("Date")}, {
                         "$push" : { "unitHours" : { "time" : f"{cT}:00", 
                         "unitCount" : unitCount } }
