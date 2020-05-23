@@ -35,7 +35,7 @@ class Init():
     @checkError 
     def listen(self):
         if os.path.exists(self.path_to_csv_file):
-            start = time.perf_counter
+            start = time.perf_counter()
             print("[CSV FILE FOUND]\n")
             self.csv.csvFile()
             csvData = self.csv.csvData
@@ -79,7 +79,7 @@ class Init():
 
             os.remove(self.path_to_csv_file)
 
-            end = time.perf_counter
+            end = time.perf_counter()
 
             print(f"\nCycle {self.cycle} Complete - {current_dateTime()} - Took {round(end-start, 2)} second(s)\n")
         
