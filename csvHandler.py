@@ -114,6 +114,7 @@ class CSV():
                                 "updated_at" : current_time,
                                 "unit" : unit,
                                 "sos" : sos,
+                                "shift_average" : 0,
                                 "task_time" : task_time,
                                 "arrivals" : arrivals,
                                 "post_time" : post_time,

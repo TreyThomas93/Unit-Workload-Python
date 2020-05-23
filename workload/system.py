@@ -42,7 +42,6 @@ class SystemHandler():
             # Get Unit Hour Averages
             self.getUnitHourAverage()
 
-
     @checkError
     def snapShot(self):
         driving = self.liveWorkload.find({"status" : "Driving"}).count()

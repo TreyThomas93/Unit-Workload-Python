@@ -2,6 +2,7 @@ from assets.errorHandler import checkError
 from assets.currentDatetime import current_dateTime
 from datetime import datetime
 from pprint import pprint
+import statistics
 
 class liveWorkloadHandler():
     
@@ -139,6 +140,24 @@ class liveWorkloadHandler():
 
             if arrivals > last_arrivals:
                 self.system.accumulatedCalls()
+
+    @checkError
+    def unitAverage(self):
+        values = []
+        for unit in self.csvData:
+            shiftAverage = self.shiftAverage.find({ "sos" : unit["sos"] })
+
+            if shiftAverage:
+                for average in shiftAverage:
+                    values.append(average["workload"])
+
+        
+            if len(values) > 0:
+                average = statistics.mean(round(values, 2))
+            else:
+                average = 0
+
+            unit["shift_average"] = average
 
     @checkError
     def commitLiveWorkload(self):

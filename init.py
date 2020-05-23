@@ -45,6 +45,7 @@ class Init():
             self.liveWorkloadHandler(csvData)
             self.liveWorkloadHandler.unitWorkload()
             self.liveWorkloadHandler.unitStatus()
+            self.liveWorkloadHandler.unitAverage()
             self.liveWorkloadHandler.commitLiveWorkload()
 
             notificationList = self.liveWorkloadHandler.notificationList
