@@ -383,6 +383,8 @@ class SystemHandler():
             for k,v in hour.items():
                 if len(v) > 0:
                     averageList.append({ k : statistics.mean(v)})
+                else:
+                    averageList.append({ k : 0 })
 
         self.system.update_one({"date" : current_dateTime("Date")}, {
             "$set" : { "unitHourlyAverages" : averageList }
