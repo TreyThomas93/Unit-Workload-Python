@@ -321,7 +321,7 @@ class SystemHandler():
 
             unitCount = self.liveWorkload.find({}).count()
 
-            if len(unitHours) > 0:
+            if unitHours > 0:
                 for item in unitHours:
                     if cT not in item:
                         print(cT)
