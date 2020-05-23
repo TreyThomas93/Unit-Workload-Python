@@ -66,11 +66,11 @@ class Init():
             t4.start()
             t5.start()
 
-            # t1.join()
-            # t2.join()
-            # t3.join()
-            # t4.join()
-            # t5.join()
+            t1.join()
+            t2.join()
+            t3.join()
+            t4.join()
+            t5.join()
 
             self.iterationCount = 0
             self.cycle+=1
