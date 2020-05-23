@@ -330,6 +330,7 @@ class SystemHandler():
                             "$push" : { "unitHours" : { cT : unitCount } }
                         })
             else:
+                print("Below")
                 self.hourlyUnitAverage.update_one({"date" : current_dateTime("Date")}, {
                     "$push" : { "unitHours" : { cT : unitCount } }
                 })
