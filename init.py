@@ -34,6 +34,7 @@ class Init():
 
     @checkError 
     def listen(self):
+        threading.Thread(target=self.systemHandler.HourlyUnitAverage).start()
         if os.path.exists(self.path_to_csv_file):
             print("[CSV FILE FOUND]\n")
             self.csv.csvFile()
@@ -98,9 +99,9 @@ class Init():
 
 if __name__ == "__main__":
     init = Init()
-    init.startUpTestMessage()
+    # init.startUpTestMessage()
     while True:
         init.listen()
         time.sleep(1)
-        # break
+        break
 

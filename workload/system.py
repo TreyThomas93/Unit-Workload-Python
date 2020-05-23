@@ -323,17 +323,19 @@ class SystemHandler():
 
             if len(unitHours) > 0:
                 print("ABOVE ABOVE")
-                for item in unitHours:
-                    if cT not in item:
-                        print(cT)
-                        print("Above")
-                        self.hourlyUnitAverage.update_one({"date" : current_dateTime("Date")}, {
-                            "$push" : { "unitHours" : { cT : unitCount } }
-                        })
+                if not any(i['time'] == cT for i in unitHours):
+                    print(cT)
+                    print(item)
+                    print("Above")
+                    self.hourlyUnitAverage.update_one({"date" : current_dateTime("Date")}, {
+                        "$push" : { "unitHours" : { "time" : cT, 
+                        "unitCount" : unitCount } }
+                    })
             else:
                 print("BELOW BELOW")
                 self.hourlyUnitAverage.update_one({"date" : current_dateTime("Date")}, {
-                    "$push" : { "unitHours" : { cT : unitCount } }
-                })
+                        "$push" : { "unitHours" : { "time" : cT, 
+                        "unitCount" : unitCount } }
+                    })
                     
         
