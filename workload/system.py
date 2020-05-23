@@ -39,6 +39,10 @@ class SystemHandler():
             foundObj["accumulated_units"] = rollOver
             self.system.insert_one(foundObj)
 
+            # Get Unit Hour Averages
+            self.getUnitHourAverage()
+
+
     @checkError
     def snapShot(self):
         driving = self.liveWorkload.find({"status" : "Driving"}).count()
@@ -332,5 +336,57 @@ class SystemHandler():
                         "$push" : { "unitHours" : { "time" : f"{cT}:00", 
                         "unitCount" : unitCount } }
                     })
+
+    @checkError
+    def getUnitHourAverage(self):
+
+        unitHours = self.hourlyUnitAverage.find({})
+
+        hours = [
+            { "00:00" : [] },
+            { "01:00" : [] },
+            { "02:00" : [] },
+            { "03:00" : [] },
+            { "04:00" : [] },
+            { "05:00" : [] },
+            { "06:00" : [] },
+            { "07:00" : [] },
+            { "08:00" : [] },
+            { "09:00" : [] },
+            { "10:00" : [] },
+            { "11:00" : [] },
+            { "12:00" : [] },
+            { "13:00" : [] },
+            { "14:00" : [] },
+            { "15:00" : [] },
+            { "16:00" : [] },
+            { "17:00" : [] },
+            { "18:00" : [] },
+            { "19:00" : [] },
+            { "20:00" : [] },
+            { "21:00" : [] },
+            { "22:00" : [] },
+            { "23:00" : [] }
+        ]
+
+        # Add unit counts to appropriate lists in hours dict
+        for item in unitHours:
+            for i in item["unitHours"]:
+                for hour in hours:
+                    for k,v in hour.items():
+                        if k == i["time"]:
+                            v.append(i["unitCount"])
+
+        averageList = []
                     
+        # Get mean of each list in hours
+        for hour in hours:
+            for k,v in hour.items():
+                if len(v) > 0:
+                    averageList.append({ k : statistics.mean(v)})
+
+        self.system.update_one({"date" : current_dateTime("Date")}, {
+            "$set" : { "unitHourlyAverages" : averageList }
+        }, upsert=True)
+
         
