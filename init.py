@@ -29,7 +29,7 @@ class Init():
         self.systemHandler = SystemHandler(self.system, self.liveWorkload, self.historicWorkload, self.hourlyUnitAverage)
 
         self.csv = CSV(self.path_to_csv_file, self.liveWorkload)
-        self.liveWorkloadHandler = liveWorkloadHandler(self.systemHandler)
+        self.liveWorkloadHandler = liveWorkloadHandler(self.systemHandler, self.shiftAverage)
         self.historicWorkloadHandler = historicWorkloadHandler(self.liveWorkload, self.shiftAverage, self.historicWorkload)
 
     @checkError 

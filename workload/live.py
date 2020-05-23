@@ -6,12 +6,13 @@ import statistics
 
 class liveWorkloadHandler():
     
-    def __init__(self, systemHandler):
+    def __init__(self, systemHandler, shiftAverage):
         self.max_threshold = 1
         self.max_task = 70
         self.notificationList = []
         self.system = systemHandler
         self.liveWorkload = self.system.liveWorkload
+        self.shiftAverage = shiftAverage
         
     def __call__(self, csvData):
         self.csvData = csvData
