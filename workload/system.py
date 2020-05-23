@@ -328,13 +328,13 @@ class SystemHandler():
                     print(item)
                     print("Above")
                     self.hourlyUnitAverage.update_one({"date" : current_dateTime("Date")}, {
-                        "$push" : { "unitHours" : { "time" : cT, 
+                        "$push" : { "unitHours" : { "time" : f"{cT}:00", 
                         "unitCount" : unitCount } }
                     })
             else:
                 print("BELOW BELOW")
                 self.hourlyUnitAverage.update_one({"date" : current_dateTime("Date")}, {
-                        "$push" : { "unitHours" : { "time" : cT, 
+                        "$push" : { "unitHours" : { "time" : f"{cT}:00", 
                         "unitCount" : unitCount } }
                     })
                     
