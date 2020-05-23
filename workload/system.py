@@ -83,7 +83,7 @@ class SystemHandler():
                 msg['From'] = FROM_EMAIL
                 msg['To'] = TO_EMAIL
                 msg['Subject'] = "[SYSTEM ALERT]"
-                msg.attach(MIMEText(data, 'plain'))
+                msg.attach(MIMEText(message, 'plain'))
                 server.send_message(msg)
                 del msg
                 print(f"[MESSAGE SENT] {message}")
