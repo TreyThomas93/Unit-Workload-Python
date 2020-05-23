@@ -154,7 +154,7 @@ class liveWorkloadHandler():
 
         
             if len(values) > 0:
-                average = statistics.mean(round(values, 2))
+                average = round(statistics.mean(values), 2)
             else:
                 average = 0
 
