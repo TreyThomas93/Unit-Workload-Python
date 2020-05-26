@@ -36,10 +36,9 @@ class Master():
         self.liveWorkload = self.mongo.liveWorkload
         self.historicWorkload = self.mongo.historicWorkload
         self.system = self.mongo.system
-        self.hourlyCounts = self.mongo.hourlyCounts
         self.master = self.mongo.master
 
-        self.systemHandler = systemHandler(self.system, self.liveWorkload, self.historicWorkload, self.hourlyCounts)
+        self.systemHandler = systemHandler(self.system, self.liveWorkload, self.historicWorkload)
 
         self.notifyLog = NotifyLog(self.system, self.liveWorkload)
 

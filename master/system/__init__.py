@@ -9,11 +9,10 @@ import datetime
 
 class systemHandler():
 
-    def __init__(self, system, liveWorkload, historicWorkload, hourlyCounts):
+    def __init__(self, system, liveWorkload, historicWorkload):
         self.system = system
         self.liveWorkload = liveWorkload
         self.historicWorkload = historicWorkload
-        self.hourlyCounts = hourlyCounts
         self.notifyLog = NotifyLog(system, liveWorkload)
         self.alreadySent = False
 
@@ -49,6 +48,13 @@ class systemHandler():
                     "post_time" : [],
                     "drive_time" : [],
                 },
+                "hourlyToday" : {
+                    "unit" : [],
+                    "call" : [],
+                    "on_call_time" : [],
+                    "post_time" : [],
+                    "drive_time" : [],
+                },
                 "logs" : []
             },
             "after_noon" : {
@@ -64,6 +70,13 @@ class systemHandler():
                     "level_zero" : 0
                 },
                 "hourlyAverages" : {
+                    "unit" : [],
+                    "call" : [],
+                    "on_call_time" : [],
+                    "post_time" : [],
+                    "drive_time" : [],
+                },
+                "hourlyToday" : {
                     "unit" : [],
                     "call" : [],
                     "on_call_time" : [],
@@ -98,19 +111,6 @@ class systemHandler():
             t3.join()
             t4.join()
             t5.join()
-
-        hourlyCountFound = self.hourlyCounts.find_one({"date" : current_dateTime("Date")})
-
-        # If it doesnt exist, insert it
-        if not hourlyCountFound:
-            self.hourlyCounts.insert_one({
-                "date" : current_dateTime("Date"),
-                "unitHours" : [],
-                "callHours" : [],
-                "on_call_timeHours" : [],
-                "post_timeHours" : [],
-                "drive_timeHours" : [],
-            })
 
         t6 = threading.Thread(target=self.accumulateLevelZero)
         t7 = threading.Thread(target=self.getWeeklyOffOnTime)
@@ -199,13 +199,11 @@ class systemHandler():
     @checkError
     def getHourlyCount(self, countFor):
 
-        hourlyCount = self.hourlyCounts.find_one({"date" : current_dateTime("Date")})
+        system = self.system.find_one({"date" : current_dateTime("Date")})
 
         cT = current_dateTime("Time").split(":")[0]
 
-        hoursArray = hourlyCount[f"{countFor}Hours"]
-
-        system = self.system.find_one({"date" : current_dateTime("Date")})
+        hoursToday = system[self.flux]["hourlyToday"][f"{countFor}"]
 
         if countFor == "unit":
             count = self.liveWorkload.find({}).count()
@@ -218,24 +216,24 @@ class systemHandler():
         elif countFor == "drive_time":
             count = system[self.flux]["accumulated"]["drive_time"]
 
-        if len(hoursArray) > 0:
-            if not any(i['time'] == f"{cT}:00" for i in hoursArray):
-                self.hourlyCounts.update_one({"date" : current_dateTime("Date")}, {
-                    "$push" : { f"{countFor}Hours" : { "time" : f"{cT}:00", 
+        if len(hoursToday) > 0:
+            if not any(i['time'] == f"{cT}:00" for i in hoursToday):
+                self.system.update_one({"date" : current_dateTime("Date")}, {
+                    "$push" : { f"{self.flux}.hourlyToday.{countFor}" : { "time" : f"{cT}:00", 
                     f"{countFor}Count" : count } }
                 })
         else:
-            self.hourlyCounts.update_one({"date" : current_dateTime("Date")}, {
-                    "$push" : { f"{countFor}Hours" : { "time" : f"{cT}:00", 
+            self.system.update_one({"date" : current_dateTime("Date")}, {
+                    "$push" : { f"{self.flux}.hourlyToday.{countFor}" : { "time" : f"{cT}:00", 
                     f"{countFor}Count" : count } }
                 })
         
     @checkError
     def getHourlyAverageCount(self, countFor):
 
-        allHourlyCounts = self.hourlyCounts.find({})
+        allHourlyCounts = self.system.find({})
 
-        hours = [
+        beforeNoonHours = [
             { "00:00" : [] },
             { "01:00" : [] },
             { "02:00" : [] },
@@ -248,7 +246,10 @@ class systemHandler():
             { "09:00" : [] },
             { "10:00" : [] },
             { "11:00" : [] },
-            { "12:00" : [] },
+            { "12:00" : [] }
+        ]
+
+        afterNoonHours = [
             { "13:00" : [] },
             { "14:00" : [] },
             { "15:00" : [] },
@@ -262,26 +263,37 @@ class systemHandler():
             { "23:00" : [] }
         ]
 
-        # Add unit counts to appropriate lists in hours dict
-        for item in allHourlyCounts:
-            for i in item[f"{countFor}Hours"]:
-                for hour in hours:
-                    for k,v in hour.items():
-                        if k == i["time"] and item["date"]:
-                            v.append(i[f"{countFor}Count"])
+        shifts = [
+            "before_noon",
+            "after_noon"
+        ]
 
-        averageList = []
-                    
-        # Get mean of each list in hours
-        for hour in hours:
-            for k,v in hour.items():
-                if len(v) > 0:
-                    averageList.append({ k : statistics.mean(v)})
-                else:
-                    averageList.append({ k : 0 })
+        for shift in shifts:
+            if shift == "before_noon":
+                hours = beforeNoonHours
+            else:
+                hours = afterNoonHours
 
-        self.system.update_one({"date" : current_dateTime("Date")}, {
-            "$set" : { f"{self.flux}.hourlyAverages.{countFor}" : averageList }
-        }, upsert=True)
+            # Add unit counts to appropriate lists in hours dict before noon
+            for item in allHourlyCounts:
+                for i in item[shift]["hourlyToday"][f"{countFor}"]:
+                    for hour in hours:
+                        for k,v in hour.items():
+                            if k == i["time"] and item["date"]:
+                                v.append(i[f"{countFor}Count"])
+
+            averageList = []
+            # Get mean of each list in hours
+            for hour in hours:
+                for k,v in hour.items():
+                    if len(v) > 0:
+                        averageList.append({ k : statistics.mean(v)})
+                    else:
+                        averageList.append({ k : 0 })
+            self.system.update_one({"date" : current_dateTime("Date")}, {
+                "$set" : { f"{shift}.hourlyAverages.{countFor}" : averageList }
+            }, upsert=True)
+
+            averageList.clear()
 
     
