@@ -177,4 +177,4 @@ class liveWorkloadHandler():
 
                 type = "New"
 
-            print(colored(f"Unit {unit['unit']} - Type: {type}", "yellow"))
+            print(colored(f"--> Unit {unit['unit']} - Type: {type}", "yellow"))

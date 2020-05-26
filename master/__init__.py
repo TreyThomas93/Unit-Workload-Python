@@ -66,31 +66,31 @@ class Master():
             self.csv.csvFile()
             csvData = self.csv.csvData
             csvEnd = time.perf_counter()
-            print(colored(f"CSV - Took {round(csvEnd-start, 2)} second(s)\n", "red"))
+            print(colored(f"--> CSV - Took {round(csvEnd-start, 2)} second(s)\n", "red"))
 
             print(colored("\n[HANDLING LIVE WORKLOAD]", "green"))
             print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
             self.liveWorkloadHandler(csvData)
             liveEnd = time.perf_counter()
-            print(colored(f"LIVE - Took {round(liveEnd-csvEnd, 2)} second(s)\n", "red"))
+            print(colored(f"--> LIVE - Took {round(liveEnd-csvEnd, 2)} second(s)\n", "red"))
 
             print(colored("\n[NOTIFY/LOG]", "green"))
             print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
             self.notifyLog(self.liveWorkloadHandler.notificationList, self.flux)
             notifylogEnd = time.perf_counter()
-            print(colored(f"NOTIFY/LOG - Took {round(notifylogEnd-liveEnd, 2)} second(s)\n", "red"))
+            print(colored(f"--> NOTIFY/LOG - Took {round(notifylogEnd-liveEnd, 2)} second(s)\n", "red"))
 
             print(colored("\n[HANDLING HISTORIC WORKLOAD]", "green"))
             print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
             self.historicWorkloadHandler(csvData)
             historicEnd = time.perf_counter()
-            print(colored(f"HISTORIC - Took {round(historicEnd-notifylogEnd, 2)} second(s)\n", "red"))
+            print(colored(f"--> HISTORIC - Took {round(historicEnd-notifylogEnd, 2)} second(s)\n", "red"))
 
             print(colored("\n[HANDLING SYSTEM]", "green"))
             print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
             self.systemHandler(csvData, self.flux)
             systemEnd = time.perf_counter()
-            print(colored(f"SYSTEM - Took {round(systemEnd-historicEnd, 2)} second(s)\n", "red"))
+            print(colored(f"--> SYSTEM - Took {round(systemEnd-historicEnd, 2)} second(s)\n", "red"))
 
             self.iterationCount = 0
             self.cycle += 1
@@ -103,7 +103,7 @@ class Master():
             end = time.perf_counter()
 
             print(colored(
-                f"\nCycle {self.cycle} Complete - {current_dateTime()} - Took {round(end-start, 2)} second(s)\n", "yellow"))
+                f"\n--> Cycle {self.cycle} Complete - {current_dateTime()} - Took {round(end-start, 2)} second(s)\n", "yellow"))
 
         self.iterationCount += 1
         if self.iterationCount == 120:  # 2 minutes without CSV will send notification
