@@ -19,7 +19,7 @@ import threading
 class Master():
 
     def __init__(self):
-        self.testing = True
+        self.testing = False
 
         if not self.testing:
             if platform.system() == "Windows":
@@ -109,4 +109,3 @@ if __name__ == "__main__":
         master()
         master.listen()
         time.sleep(1)
-        break
