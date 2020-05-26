@@ -6,6 +6,7 @@ from assets.currentDatetime import current_dateTime
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from termcolor import colored
 
 class NotifyLog():
 
@@ -45,7 +46,7 @@ class NotifyLog():
                 msg.attach(MIMEText(self.data, 'plain'))
                 self.server.send_message(msg)
                 del msg
-                print(f"[MESSAGE SENT] {self.data}")
+                print(colored(f"[MESSAGE SENT] {self.data}", "yellow"))
                 
             elif self.dataType == list:
                 for message in self.data:
@@ -56,7 +57,7 @@ class NotifyLog():
                     msg.attach(MIMEText(message, 'plain'))
                     self.server.send_message(msg)
                     del msg
-                    print(f"[MESSAGE SENT] {message}")
+                    print(colored(f"[MESSAGE SENT] {message}", "yellow"))
 
             self.server.quit()
 

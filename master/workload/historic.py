@@ -2,6 +2,7 @@ from assets.errorHandler import checkError
 from assets.currentDatetime import current_dateTime
 
 import threading
+from termcolor import colored
 
 class historicWorkloadHandler():
 
@@ -35,7 +36,7 @@ class historicWorkloadHandler():
             # Check For Outdated Unit Data If Unit not in new CSV file data
             if unit not in checkOutdatedList:
 
-                print(f"Unit {unit} Purged - Last Updated: {updated_at}")
+                print(colored(f"Unit {unit} Purged - Last Updated: {updated_at}", "yellow"))
                 
                 if threshold > 0.92:
                     # SAVE TO HISTORIC WORKLOAD 
@@ -55,8 +56,8 @@ class historicWorkloadHandler():
 
                     self.historicWorkload.insert_one(historic)
 
-                    print(f"Unit {unit} Added To Historic Workload Database")
-                    print("================================================")
+                    print(colored(f"Unit {unit} Added To Historic Workload Database", "yellow"))
+                    print(colored("================================================", "blue"))
 
                 #  DELETE FROM LIVE WORKLOAD 
                 self.liveWorkload.delete_one({"unit" : unit})

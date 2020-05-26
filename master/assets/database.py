@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from assets.env import uri
+from termcolor import colored
 
 class mongoDatabase():
 
@@ -15,8 +16,8 @@ class mongoDatabase():
     def connect(self):
         try:
             self.client = MongoClient(uri)
-            print("Connected To Mongo")
+            print(colored("Connected To Mongo", "green"))
             return True
         except Exception as e:
-            print(f"Failed To Connect To Mongo - {e}")
+            print(colored(f"Failed To Connect To Mongo - {e}", "red"))
             return False

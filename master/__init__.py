@@ -14,12 +14,12 @@ import os
 import time
 from pprint import pprint
 import threading
-
+from termcolor import colored
 
 class Master():
 
     def __init__(self):
-        self.testing = False
+        self.testing = True
 
         if not self.testing:
             if platform.system() == "Windows":
@@ -59,26 +59,26 @@ class Master():
     def listen(self):
         if os.path.exists(self.path_to_csv_file):
             start = time.perf_counter()
-            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-            print("\n[CSV FILE FOUND]")
-            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
+            print(colored("\n[CSV FILE FOUND]", "green"))
+            print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
             self.csv.csvFile()
             csvData = self.csv.csvData
 
-            print("\n[HANDLING LIVE WORKLOAD]")
-            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            print(colored("\n[HANDLING LIVE WORKLOAD]", "green"))
+            print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
             self.liveWorkloadHandler(csvData)
 
-            print(f"\n[NOTIFY/LOG]")
-            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            print(colored("\n[NOTIFY/LOG]", "green"))
+            print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
             self.notifyLog(self.liveWorkloadHandler.notificationList, self.flux)
 
-            print("\n[HANDLING HISTORIC WORKLOAD]")
-            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            print(colored("\n[HANDLING HISTORIC WORKLOAD]", "green"))
+            print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
             self.historicWorkloadHandler(csvData)
 
-            print("\n[HANDLING SYSTEM]")
-            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            print(colored("\n[HANDLING SYSTEM]", "green"))
+            print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
             self.systemHandler(csvData, self.flux)
 
             self.iterationCount = 0
@@ -90,8 +90,8 @@ class Master():
 
             end = time.perf_counter()
 
-            print(
-                f"\nCycle {self.cycle} Complete - {current_dateTime()} - Took {round(end-start, 2)} second(s)\n")
+            print(colored(
+                f"\nCycle {self.cycle} Complete - {current_dateTime()} - Took {round(end-start, 2)} second(s)\n", "yellow"))
 
         self.iterationCount += 1
         if self.iterationCount == 120:  # 2 minutes without CSV will send notification
@@ -109,3 +109,4 @@ if __name__ == "__main__":
         master()
         master.listen()
         time.sleep(1)
+        break

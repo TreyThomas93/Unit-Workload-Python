@@ -3,6 +3,7 @@ from assets.currentDatetime import current_dateTime
 from datetime import datetime
 from pprint import pprint
 import statistics
+from termcolor import colored
 
 class liveWorkloadHandler():
     
@@ -177,4 +178,4 @@ class liveWorkloadHandler():
 
                 type = "New"
 
-            print(f"Unit {unit['unit']} - Type: {type}")
+            print(colored(f"Unit {unit['unit']} - Type: {type}", "yellow"))

@@ -139,7 +139,6 @@ class systemHandler():
 
     @checkError
     def accumulateToSystem(self, key):
-        print(f"{self.flux}.accumulated.{key}")
         self.system.update_one({"date" : current_dateTime("Date")},
         {"$inc": {f"{self.flux}.accumulated.{key}" : 1}}, upsert=False)
 
