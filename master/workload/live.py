@@ -15,6 +15,7 @@ class liveWorkloadHandler():
         self.historicWorkload = historicWorkload
         self.system = system
         
+    @checkError    
     def __call__(self, csvData):
         self.csvData = csvData
 

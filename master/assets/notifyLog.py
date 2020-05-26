@@ -19,12 +19,11 @@ class NotifyLog():
         self.liveWorkload = liveWorkload
 
     @checkError
-    def __call__(self, data, flux, log=True, notify=True):
+    def __call__(self, data, log=True, notify=True):
         self.server = smtplib.SMTP( "smtp.gmail.com", 587 )
         self.data = data
         self.log = log
-        self.notify = notify
-        self.flux = flux
+        self.notify = notify 
         self.dataType = type(self.data)
 
         t1 = threading.Thread(target=self.Notify)
@@ -95,12 +94,12 @@ class NotifyLog():
                     obj["log"] = f"{msg} - {current_dateTime('Time')}"
 
                     self.system.update_one({"date" : current_dateTime("Date")}, 
-                    {"$push" : { f"{self.flux}.logs" : obj }}
+                    {"$push" : { "logs" : obj }}
                     , upsert=False)
             elif self.dataType == str:
 
                 obj["log"] = f"{self.data} - {current_dateTime('Time')}"
 
                 self.system.update_one({"date" : current_dateTime("Date")}, 
-                {"$push" : { f"{self.flux}.logs" : obj }}
+                {"$push" : { "logs" : obj }}
                 , upsert=False)

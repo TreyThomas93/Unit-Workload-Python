@@ -49,12 +49,6 @@ class Master():
         self.historicWorkloadHandler = historicWorkloadHandler(
             self.liveWorkload, self.historicWorkload)
 
-    def __call__(self):
-        if current_dateTime("Time")[0:2] < str(12):
-            self.flux = "before_noon"
-        else:
-            self.flux = "after_noon"
-
     @checkError
     def listen(self):
         if os.path.exists(self.path_to_csv_file):
@@ -62,32 +56,32 @@ class Master():
             print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
             print(colored("\n[CSV FILE FOUND]", "green"))
             print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
-            self.csv.csvFile()
+            # self.csv.csvFile()
             csvData = self.csv.csvData
             csvEnd = time.perf_counter()
             print(colored(f"--> CSV - Took {round(csvEnd-start, 2)} second(s)\n", "red"))
 
             print(colored("\n[HANDLING LIVE WORKLOAD]", "green"))
             print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
-            self.liveWorkloadHandler(csvData)
+            # self.liveWorkloadHandler(csvData)
             liveEnd = time.perf_counter()
             print(colored(f"--> LIVE - Took {round(liveEnd-csvEnd, 2)} second(s)\n", "red"))
 
             print(colored("\n[NOTIFY/LOG]", "green"))
             print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
-            self.notifyLog(self.liveWorkloadHandler.notificationList, self.flux)
+            # self.notifyLog(self.liveWorkloadHandler.notificationList)
             notifylogEnd = time.perf_counter()
             print(colored(f"--> NOTIFY/LOG - Took {round(notifylogEnd-liveEnd, 2)} second(s)\n", "red"))
 
             print(colored("\n[HANDLING HISTORIC WORKLOAD]", "green"))
             print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
-            self.historicWorkloadHandler(csvData)
+            # self.historicWorkloadHandler(csvData)
             historicEnd = time.perf_counter()
             print(colored(f"--> HISTORIC - Took {round(historicEnd-notifylogEnd, 2)} second(s)\n", "red"))
 
             print(colored("\n[HANDLING SYSTEM]", "green"))
             print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
-            self.systemHandler(csvData, self.flux)
+            self.systemHandler(csvData)
             systemEnd = time.perf_counter()
             print(colored(f"--> SYSTEM - Took {round(systemEnd-historicEnd, 2)} second(s)\n", "red"))
 
@@ -96,8 +90,8 @@ class Master():
             self.csv.csvData.clear()
             self.liveWorkloadHandler.notificationList.clear()
 
-            if not self.testing:
-                os.remove(self.path_to_csv_file)
+            # if not self.testing:
+            #     os.remove(self.path_to_csv_file)
 
             end = time.perf_counter()
 
@@ -107,7 +101,7 @@ class Master():
         self.iterationCount += 1
         if self.iterationCount == 120:  # 2 minutes without CSV will send notification
             msg = "[ALERT] - CSV Undetected For 2 Minutes"
-            self.notifyLog(msg, self.flux, log=False)
+            self.notifyLog(msg, log=False)
             self.master.insert_one({ 
                 "dateTime" : current_dateTime(),
                 "message" : msg
@@ -115,13 +109,12 @@ class Master():
 
         if self.iterationCount == 1800:  # 30 minutes then place system data invalid
             self.system.update_one({"date": current_dateTime("Date")},
-                                   {"$set": {f"{self.flux}.valid": False}}, upsert=False)
+                                   {"$set": {"valid": False}}, upsert=False)
             print("[SYSTEM DATA] - Invalid")
 
 if __name__ == "__main__":
     master = Master()
     while True:
-        master()
         master.listen()
         time.sleep(1)
-        # break
+        break
