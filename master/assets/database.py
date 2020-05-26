@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from env import uri
+from assets.env import uri
 
 class mongoDatabase():
 
@@ -10,8 +10,7 @@ class mongoDatabase():
             self.liveWorkload = self.db["liveWorkload"]
             self.historicWorkload = self.db["historicWorkload"]
             self.system = self.db["System"]
-            self.shiftAverage = self.db["shiftAverage"]
-            self.hourlyUnitAverage = self.db["hourlyUnitAverage"]
+            self.hourlyCounts = self.db["hourlyCounts"]
 
     def connect(self):
         try:

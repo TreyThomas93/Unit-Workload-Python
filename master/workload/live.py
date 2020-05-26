@@ -6,16 +6,21 @@ import statistics
 
 class liveWorkloadHandler():
     
-    def __init__(self, systemHandler, shiftAverage):
+    def __init__(self, liveWorkload, historicWorkload, system):
         self.max_threshold = 1
         self.max_task = 70
         self.notificationList = []
-        self.system = systemHandler
-        self.liveWorkload = self.system.liveWorkload
-        self.shiftAverage = shiftAverage
+        self.liveWorkload = liveWorkload
+        self.historicWorkload = historicWorkload
+        self.system = system
         
     def __call__(self, csvData):
         self.csvData = csvData
+
+        self.unitWorkload()
+        self.unitStatus()
+        self.unitAverage()
+        self.commitLiveWorkload()
 
     @checkError
     def unitWorkload(self):
@@ -81,37 +86,34 @@ class liveWorkloadHandler():
             last_arrivals = unit["last_arrivals"]
 
             if threshold < self.max_threshold:
-                
+
                 if task_time > last_task_time:
                     if status == "Fueling" or status == "EOS" or status == "Late Call":
                         status = "Late Call"
                     else:
                         status = "On Call"
                     unit["on_call_time"]+=1
-                    self.system.accumulatedOnCallTime()
-
+                    self.system.accumulateToSystem("on_call_time")
                 elif post_time > last_post_time:
                     if threshold < 0.92:
                         status = "Posting"
-                        self.system.accumulatedPostTime()
+                        self.system.accumulateToSystem("post_time")
                     elif threshold >= 0.92 and threshold < 0.94:
                         status = "Fueling"
                     elif threshold >= 0.94 and threshold < self.max_threshold:
                         status = "EOS"
 
                     unit["last_post"] = current_dateTime("Time")[0:5]
-
                 else:
                     if threshold < 0.92:
                         status = "Driving"
                         unit["drive_time"]+=1
-                        self.system.accumulatedDriveTime()
+                        self.system.accumulateToSystem("drive_time")
                     elif threshold >= 0.92 and threshold < 0.94:
                         status = "Fueling"
                     elif threshold >= 0.94 and threshold < self.max_threshold:
                         status = "EOS"
                     unit["late_call"] = False
-
             else:
                 status = "Past EOS"
 
@@ -129,24 +131,25 @@ class liveWorkloadHandler():
                 unit["late_call"] = True
                 msg = f"Unit {unit['unit']} Received Late Call"
                 self.notificationList.append(msg)
-                self.system.accumulatedLateCalls()
+                self.system.accumulateToSystem("late_call")
 
             if status == "Past EOS" and not past_eos:
                 unit["past_eos"] = True
                 msg = f"Unit {unit['unit']} Past EOS"
                 self.notificationList.append(msg)
-                self.system.accumulatedPastEOS()
+                self.system.accumulateToSystem("past_eos")
             
             unit["status"] = status
 
             if arrivals > last_arrivals:
-                self.system.accumulatedCalls()
+                self.system.accumulateToSystem("calls")
+                print(f"Arrivals: {task_time} - Last Arrivals: {last_task_time}")
 
     @checkError
     def unitAverage(self):
         values = []
         for unit in self.csvData:
-            shiftAverage = self.shiftAverage.find({ "sos" : unit["sos"] })
+            shiftAverage = self.historicWorkload.find({ "sos" : unit["sos"] })
 
             if shiftAverage:
                 for average in shiftAverage:
@@ -171,8 +174,6 @@ class liveWorkloadHandler():
                 type = "Existing"
             else:
                 self.liveWorkload.insert_one(unit)
-
-                self.system.accumulatedUnits()
 
                 type = "New"
 

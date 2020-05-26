@@ -81,7 +81,7 @@ class CSV():
                             crew_member_one = "N/A"
                             crew_member_two = "N/A"
 
-                        voidUnits = ["H", "7", "5", "E"]
+                        voidUnits = ["H", "7", "5", "E", "T"]
 
                         unitExists = self.liveWorkload.find_one({"unit" : unit})
                         if unitExists:

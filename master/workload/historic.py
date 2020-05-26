@@ -1,12 +1,19 @@
 from assets.errorHandler import checkError
 from assets.currentDatetime import current_dateTime
 
+import threading
+
 class historicWorkloadHandler():
 
-    def __init__(self, liveWorkload, shiftAverage, historicWorkload):
+    def __init__(self, liveWorkload, historicWorkload):
         self.liveWorkload = liveWorkload
-        self.shiftAverage = shiftAverage
         self.historicWorkload = historicWorkload
+
+    @checkError
+    def __call__(self, csvData):
+        t1 = threading.Thread(target=self.checkOutdated, args=(csvData,))
+        t1.start()
+        t1.join()
 
     @checkError
     def checkOutdated(self, csvData):
@@ -31,17 +38,6 @@ class historicWorkloadHandler():
                 print(f"Unit {unit} Purged - Last Updated: {updated_at}")
                 
                 if threshold > 0.92:
-                    # SAVE TO SHIFT AVERAGE 
-                    
-                    avg = {
-                        "sos" : sos,
-                        "workload" : workload
-                    }
-
-                    self.shiftAverage.insert_one(avg)
-
-                    print(f"Unit {unit} Added To Shift Average Database")
-
                     # SAVE TO HISTORIC WORKLOAD 
                     historic = {
                         "date" : current_dateTime("Date"),
