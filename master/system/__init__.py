@@ -54,47 +54,47 @@ class systemHandler():
             self.system.insert_one(obj)
             
             t1 = threading.Thread(target=self.getHourlyAverageCount("unit"))
-            # t2 = threading.Thread(target=self.getHourlyAverageCount("call"))
-            # t3 = threading.Thread(target=self.getHourlyAverageCount("on_call_time"))
-            # t4 = threading.Thread(target=self.getHourlyAverageCount("post_time"))
-            # t5 = threading.Thread(target=self.getHourlyAverageCount("drive_time"))
+            t2 = threading.Thread(target=self.getHourlyAverageCount("call"))
+            t3 = threading.Thread(target=self.getHourlyAverageCount("on_call_time"))
+            t4 = threading.Thread(target=self.getHourlyAverageCount("post_time"))
+            t5 = threading.Thread(target=self.getHourlyAverageCount("drive_time"))
 
-            # t1.start()
-            # t2.start()
-            # t3.start()
-            # t4.start()
-            # t5.start()
+            t1.start()
+            t2.start()
+            t3.start()
+            t4.start()
+            t5.start()
 
-            # t1.join()
-            # t2.join()
-            # t3.join()
-            # t4.join()
-            # t5.join()
+            t1.join()
+            t2.join()
+            t3.join()
+            t4.join()
+            t5.join()
 
         t6 = threading.Thread(target=self.accumulateLevelZero)
         t7 = threading.Thread(target=self.getWeeklyOffOnTime)
 
         t8 = threading.Thread(target=self.getHourlyCount, args=("unit",))
-        # t9 = threading.Thread(target=self.getHourlyCount, args=("call",))
-        # t10 = threading.Thread(target=self.getHourlyCount, args=("on_call_time",))
-        # t11 = threading.Thread(target=self.getHourlyCount, args=("post_time",))
-        # t12 = threading.Thread(target=self.getHourlyCount, args=("drive_time",))
+        t9 = threading.Thread(target=self.getHourlyCount, args=("call",))
+        t10 = threading.Thread(target=self.getHourlyCount, args=("on_call_time",))
+        t11 = threading.Thread(target=self.getHourlyCount, args=("post_time",))
+        t12 = threading.Thread(target=self.getHourlyCount, args=("drive_time",))
 
         t6.start()
         t7.start()
         t8.start()
-        # t9.start()
-        # t10.start()
-        # t11.start()
-        # t12.start()
+        t9.start()
+        t10.start()
+        t11.start()
+        t12.start()
 
         t6.join()
         t7.join()
         t8.join()
-        # t9.join()
-        # t10.join()
-        # t11.join()
-        # t12.join()
+        t9.join()
+        t10.join()
+        t11.join()
+        t12.join()
 
     @checkError
     def accumulateToSystem(self, key):
@@ -109,7 +109,7 @@ class systemHandler():
         if len(levelZero) == 0:
             if not self.alreadySent:
                 msg = "System is Level Zero"
-                self.notifyLog(msg, notify=False)
+                self.notifyLog(msg)
                 self.alreadySent = True
             
             self.system.update_one({"date" : current_dateTime("Date")}, {"$inc": {"accumulated.level_zero" : 1}}, upsert=False)
@@ -163,8 +163,6 @@ class systemHandler():
 
         hoursToday = system["hourly"][countFor]
 
-        pprint(hoursToday)
-
         if countFor == "unit":
             count = self.liveWorkload.find({}).count()
         elif countFor == "call":
@@ -175,6 +173,11 @@ class systemHandler():
             count = system["accumulated"]["post_time"]
         elif countFor == "drive_time":
             count = system["accumulated"]["drive_time"]
+
+        average = 0
+        for i in hoursToday:
+            if i["time"] == f"{cT}:00":
+                average = i["average"]
         
         self.system.update_one({
             "date" : current_dateTime("Date"),
@@ -182,7 +185,8 @@ class systemHandler():
         }, {
             "$set" : { f"hourly.{countFor}.$" : {
                 "time" : f"{cT}:00",
-                "today" : count
+                "today" : count,
+                "average" : average
             } }
         })
         

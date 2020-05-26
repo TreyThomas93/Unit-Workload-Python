@@ -56,26 +56,26 @@ class Master():
             print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
             print(colored("\n[CSV FILE FOUND]", "green"))
             print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
-            # self.csv.csvFile()
+            self.csv.csvFile()
             csvData = self.csv.csvData
             csvEnd = time.perf_counter()
             print(colored(f"--> CSV - Took {round(csvEnd-start, 2)} second(s)\n", "red"))
 
             print(colored("\n[HANDLING LIVE WORKLOAD]", "green"))
             print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
-            # self.liveWorkloadHandler(csvData)
+            self.liveWorkloadHandler(csvData)
             liveEnd = time.perf_counter()
             print(colored(f"--> LIVE - Took {round(liveEnd-csvEnd, 2)} second(s)\n", "red"))
 
             print(colored("\n[NOTIFY/LOG]", "green"))
             print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
-            # self.notifyLog(self.liveWorkloadHandler.notificationList)
+            self.notifyLog(self.liveWorkloadHandler.notificationList)
             notifylogEnd = time.perf_counter()
             print(colored(f"--> NOTIFY/LOG - Took {round(notifylogEnd-liveEnd, 2)} second(s)\n", "red"))
 
             print(colored("\n[HANDLING HISTORIC WORKLOAD]", "green"))
             print(colored("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "blue"))
-            # self.historicWorkloadHandler(csvData)
+            self.historicWorkloadHandler(csvData)
             historicEnd = time.perf_counter()
             print(colored(f"--> HISTORIC - Took {round(historicEnd-notifylogEnd, 2)} second(s)\n", "red"))
 
@@ -90,8 +90,8 @@ class Master():
             self.csv.csvData.clear()
             self.liveWorkloadHandler.notificationList.clear()
 
-            # if not self.testing:
-            #     os.remove(self.path_to_csv_file)
+            if not self.testing:
+                os.remove(self.path_to_csv_file)
 
             end = time.perf_counter()
 
@@ -117,4 +117,4 @@ if __name__ == "__main__":
     while True:
         master.listen()
         time.sleep(1)
-        break
+        # break
