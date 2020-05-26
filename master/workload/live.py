@@ -144,7 +144,6 @@ class liveWorkloadHandler():
 
             if arrivals > last_arrivals:
                 self.system.accumulateToSystem("calls")
-                print(f"Arrivals: {task_time} - Last Arrivals: {last_task_time}")
 
     @checkError
     def unitAverage(self):

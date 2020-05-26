@@ -147,10 +147,10 @@ class systemHandler():
         
         levelZero = [i["unit"] for i in self.csvData if i["status"] == "Driving" or i["status"] == "Posting" or i["status"] == "SOS"]
 
-        if len(levelZero) > 0:
+        if len(levelZero) == 0:
             if not self.alreadySent:
                 msg = "System is Level Zero"
-                self.notifyLog(msg, self.flux, notify=False)
+                self.notifyLog(msg, self.flux)
                 self.alreadySent = True
             
             self.system.update_one({"date" : current_dateTime("Date")}, {"$inc": {f"{self.flux}.accumulated.level_zero" : 1}}, upsert=False)
