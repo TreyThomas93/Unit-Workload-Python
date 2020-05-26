@@ -37,6 +37,7 @@ class Master():
         self.historicWorkload = self.mongo.historicWorkload
         self.system = self.mongo.system
         self.hourlyCounts = self.mongo.hourlyCounts
+        self.master = self.mongo.master
 
         self.systemHandler = systemHandler(self.system, self.liveWorkload, self.historicWorkload, self.hourlyCounts)
 
@@ -84,6 +85,7 @@ class Master():
             self.iterationCount = 0
             self.cycle += 1
             self.csv.csvData.clear()
+            self.liveWorkloadHandler.notificationList.clear()
 
             if not self.testing:
                 os.remove(self.path_to_csv_file)
@@ -94,9 +96,13 @@ class Master():
                 f"\nCycle {self.cycle} Complete - {current_dateTime()} - Took {round(end-start, 2)} second(s)\n", "yellow"))
 
         self.iterationCount += 1
-        if self.iterationCount == 120:  # 2 minutes without CSV will send notification
+        if self.iterationCount == 1:  # 2 minutes without CSV will send notification
             msg = "[ALERT] - CSV Undetected For 2 Minutes"
             self.notifyLog(msg, self.flux, log=False)
+            self.master.insert_one({ 
+                "dateTime" : current_dateTime(),
+                "message" : msg
+                 })
 
         if self.iterationCount == 1800:  # 30 minutes then place system data invalid
             self.system.update_one({"date": current_dateTime("Date")},

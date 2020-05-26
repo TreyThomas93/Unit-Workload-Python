@@ -7,29 +7,34 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from termcolor import colored
+import threading
 
 class NotifyLog():
 
     def __init__(self, system, liveWorkload):
-        self.server = smtplib.SMTP( "smtp.gmail.com", 587 )
         self.FROM_EMAIL = FROM_EMAIL
         self.TO_EMAIL = TO_EMAIL
         self.PASSWORD = PASSWORD
         self.system = system
         self.liveWorkload = liveWorkload
 
+    @checkError
     def __call__(self, data, flux, log=True, notify=True):
+        self.server = smtplib.SMTP( "smtp.gmail.com", 587 )
         self.data = data
         self.log = log
         self.notify = notify
         self.flux = flux
         self.dataType = type(self.data)
 
-        self.Notify()
-        self.Log()
+        t1 = threading.Thread(target=self.Notify)
+        t2 = threading.Thread(target=self.Log)
 
-        if self.dataType == list:
-            self.data.clear()
+        t1.start()
+        t2.start()
+
+        t1.join()
+        t2.join()
 
     @checkError
     def Notify(self):

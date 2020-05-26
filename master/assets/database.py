@@ -12,6 +12,7 @@ class mongoDatabase():
             self.historicWorkload = self.db["historicWorkload"]
             self.system = self.db["System"]
             self.hourlyCounts = self.db["hourlyCounts"]
+            self.master = self.db["Master"]
 
     def connect(self):
         try:
