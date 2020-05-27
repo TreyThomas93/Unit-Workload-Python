@@ -236,7 +236,8 @@ class systemHandler():
                     for hour in hours:
                         for k,v in hour.items():
                             if time == k:
-                                v.append(today)
+                                if today != None:
+                                    v.append(today)
 
         averageList = []
         # Get mean of each list in hours
