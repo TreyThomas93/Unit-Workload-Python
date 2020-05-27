@@ -184,9 +184,11 @@ class systemHandler():
             if i["time"] == f"{cT}:00":
                 average = i["average"]
         
+        
         self.system.update_one({
             "date" : current_dateTime("Date"),
-            f"hourly.{countFor}.time" : f"{cT}:00"
+            f"hourly.{countFor}.time" : f"{cT}:00",
+            f"hourly.{countFor}.today" : None
         }, {
             "$set" : { f"hourly.{countFor}.$" : {
                 "time" : f"{cT}:00",
