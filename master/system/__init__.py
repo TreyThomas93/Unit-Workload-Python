@@ -179,21 +179,20 @@ class systemHandler():
         elif countFor == "drive_time":
             count = system["accumulated"]["drive_time"]
 
-        average = 0
         for i in hoursToday:
             if i["time"] == f"{cT}:00":
                 average = i["average"]
-            if i["today"] == None:
-                self.system.update_one({
-                    "date" : current_dateTime("Date"),
-                    f"hourly.{countFor}.time" : f"{cT}:00"
-                }, {
-                    "$set" : { f"hourly.{countFor}.$" : {
-                        "time" : f"{cT}:00",
-                        "today" : count,
-                        "average" : average
-                    } }
-                })
+                if i["today"] == None:
+                    self.system.update_one({
+                        "date" : current_dateTime("Date"),
+                        f"hourly.{countFor}.time" : f"{cT}:00"
+                    }, {
+                        "$set" : { f"hourly.{countFor}.$" : {
+                            "time" : f"{cT}:00",
+                            "today" : count,
+                            "average" : average
+                        } }
+                    })
         
     @checkError
     def getHourlyAverageCount(self, countFor):
