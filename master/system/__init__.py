@@ -237,9 +237,9 @@ class systemHandler():
         for hour in hours:
             for k,v in hour.items():
                 if len(v) > 0:
-                    averageList.append({"time" : k, "today" : 0, "average" : statistics.mean(v)})
+                    averageList.append({"time" : k, "today" : None, "average" : statistics.mean(v)})
                 else:
-                    averageList.append({"time" : k, "today" : 0, "average" : 0})
+                    averageList.append({"time" : k, "today" : None, "average" : 0})
 
         self.system.update_one({"date" : current_dateTime("Date")}, {
             "$set" : { f"hourly.{countFor}" : averageList }
