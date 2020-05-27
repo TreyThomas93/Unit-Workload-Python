@@ -75,6 +75,7 @@ class liveWorkloadHandler():
             workload = unit["workload"]
             threshold = unit["threshold"]
             above_max = unit["above_max"]
+            above_current = unit["above_current"]
             late_call = unit["late_call"]
             past_eos = unit["past_eos"]
             task_time = unit["task_time"]
@@ -124,10 +125,18 @@ class liveWorkloadHandler():
                 unit["workload"] = 0
                 unit["threshold"] = 0
 
-            if unit["workload"] >= self.max_threshold and not above_max:
+            if unit["workload"] >= self.max_threshold:
                 unit["above_max"] = True
-                msg = f"Unit {unit['unit']} Above Max Threshold"
-                self.notificationList.append(msg)
+                unit["above_current"] = True
+                if not above_max:
+                    msg = f"Unit {unit['unit']} Above Max Threshold"
+                    self.notificationList.append(msg)
+            elif unit["workload"] < self.max_threshold and unit["workload"] > unit["threshold"]:
+                unit["above_current"] = True
+                unit["above_max"] = False
+            elif unit["workload"] <= unit["threshold"]:
+                unit["above_current"] = False
+                unit["above_max"] = False
 
             if status == "Late Call" and not late_call:
                 unit["late_call"] = True
