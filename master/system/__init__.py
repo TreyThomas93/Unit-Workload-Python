@@ -132,6 +132,8 @@ class systemHandler():
 
         historicWorkload = self.historicWorkload.find({})
 
+        totalHistoric = self.historicWorkload.count_documents({})
+
         PastEOS = 0
         totalCrews = 0
 
@@ -144,7 +146,10 @@ class systemHandler():
                 except Exception as e:
                     error("getWeeklyOffOnTime", e)
 
-        offOnTime = 100 - round((PastEOS / totalCrews) * 100) 
+        if totalCrews > 0:
+            offOnTime = 100 - round((PastEOS / totalCrews) * 100) 
+        else:
+            offOnTime = 100
 
         dateRange = f"{dates[0]} - {current_dateTime('Date')}"    
 
