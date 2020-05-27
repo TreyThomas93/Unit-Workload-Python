@@ -109,7 +109,7 @@ class systemHandler():
         if len(levelZero) == 0:
             if not self.alreadySent:
                 msg = "System is Level Zero"
-                self.notifyLog(msg, notify=False)
+                self.notifyLog(msg)
                 self.alreadySent = True
             
             self.system.update_one({"date" : current_dateTime("Date")}, {"$inc": {"accumulated.level_zero" : 1}}, upsert=False)
