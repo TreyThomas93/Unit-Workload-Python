@@ -109,7 +109,7 @@ class systemHandler():
         if len(levelZero) == 0:
             if not self.alreadySent:
                 msg = "System is Level Zero"
-                self.notifyLog(msg)
+                self.notifyLog(msg, notify=False)
                 self.alreadySent = True
             
             self.system.update_one({"date" : current_dateTime("Date")}, {"$inc": {"accumulated.level_zero" : 1}}, upsert=False)
@@ -183,18 +183,17 @@ class systemHandler():
         for i in hoursToday:
             if i["time"] == f"{cT}:00":
                 average = i["average"]
-        
-        
-        self.system.update_one({
-            "date" : current_dateTime("Date"),
-            f"hourly.{countFor}.time" : f"{cT}:00"
-        }, {
-            "$set" : { f"hourly.{countFor}.$" : {
-                "time" : f"{cT}:00",
-                "today" : count,
-                "average" : average
-            } }
-        })
+            if i["today"] == None:
+                self.system.update_one({
+                    "date" : current_dateTime("Date"),
+                    f"hourly.{countFor}.time" : f"{cT}:00"
+                }, {
+                    "$set" : { f"hourly.{countFor}.$" : {
+                        "time" : f"{cT}:00",
+                        "today" : count,
+                        "average" : average
+                    } }
+                })
         
     @checkError
     def getHourlyAverageCount(self, countFor):
