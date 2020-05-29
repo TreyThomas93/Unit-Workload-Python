@@ -34,7 +34,8 @@ class systemHandler():
                 "drive_time" : 0,
                 "late_calls" : 0,
                 "past_eos" : 0,
-                "level_zero" : 0
+                "level_zero" : 0,
+                "post_assignments" : 0
             },
             "hourly" : {
                 "unit" : [],
@@ -42,6 +43,8 @@ class systemHandler():
                 "on_call_time" : [],
                 "post_time" : [],
                 "drive_time" : [],
+                "task_time" : [],
+                "post_assignments" : []
             },
             "logs" : []
         }
@@ -58,48 +61,61 @@ class systemHandler():
             t3 = threading.Thread(target=self.getHourlyAverageCount("on_call_time"))
             t4 = threading.Thread(target=self.getHourlyAverageCount("post_time"))
             t5 = threading.Thread(target=self.getHourlyAverageCount("drive_time"))
+            t6 = threading.Thread(target=self.getHourlyAverageCount("task_time"))
+            t7 = threading.Thread(target=self.getHourlyAverageCount("post_assignments"))
 
             t1.start()
             t2.start()
             t3.start()
             t4.start()
             t5.start()
+            t6.start()
+            t7.start()
 
             t1.join()
             t2.join()
             t3.join()
             t4.join()
             t5.join()
+            t6.join()
+            t7.join()
 
-        t6 = threading.Thread(target=self.accumulateLevelZero)
-        t7 = threading.Thread(target=self.getWeeklyOffOnTime)
+        t8 = threading.Thread(target=self.accumulateLevelZero)
+        t9 = threading.Thread(target=self.getWeeklyOffOnTime)
 
-        t8 = threading.Thread(target=self.getHourlyCount, args=("unit",))
-        t9 = threading.Thread(target=self.getHourlyCount, args=("call",))
-        t10 = threading.Thread(target=self.getHourlyCount, args=("on_call_time",))
-        t11 = threading.Thread(target=self.getHourlyCount, args=("post_time",))
-        t12 = threading.Thread(target=self.getHourlyCount, args=("drive_time",))
+        t10 = threading.Thread(target=self.getHourlyCount, args=("unit",))
+        t11 = threading.Thread(target=self.getHourlyCount, args=("call",))
+        t12 = threading.Thread(target=self.getHourlyCount, args=("on_call_time",))
+        t13 = threading.Thread(target=self.getHourlyCount, args=("post_time",))
+        t14 = threading.Thread(target=self.getHourlyCount, args=("drive_time",))
+        t15 = threading.Thread(target=self.getHourlyCount, args=("task_time",))
+        t16 = threading.Thread(target=self.getHourlyCount, args=("post_assignments",))
 
-        t6.start()
-        t7.start()
         t8.start()
         t9.start()
         t10.start()
         t11.start()
         t12.start()
+        t13.start()
+        t14.start()
+        t15.start()
+        t16.start()
 
-        t6.join()
-        t7.join()
         t8.join()
         t9.join()
         t10.join()
         t11.join()
         t12.join()
+        t13.join()
+        t14.join()
+        t15.join()
+        t16.join()
 
     @checkError
-    def accumulateToSystem(self, key):
-        self.system.update_one({"date" : current_dateTime("Date")},
-        {"$inc": {f"accumulated.{key}" : 1}}, upsert=False)
+    def accumulateToSystem(self, key, increment):
+        if increment != None and increment != 0:
+            self.system.update_one({"date" : current_dateTime("Date")},
+            {"$inc": {f"accumulated.{key}" : increment}}, upsert=False)
 
     @checkError
     def accumulateLevelZero(self):
@@ -109,7 +125,7 @@ class systemHandler():
         if len(levelZero) == 0:
             if not self.alreadySent:
                 msg = "System is Level Zero"
-                self.notifyLog(msg)
+                self.notifyLog(msg, notify=False)
                 self.alreadySent = True
             
             self.system.update_one({"date" : current_dateTime("Date")}, {"$inc": {"accumulated.level_zero" : 1}}, upsert=False)
@@ -162,10 +178,11 @@ class systemHandler():
 
     @checkError
     def getHourlyCount(self, countFor):
+
         system = self.system.find_one({"date" : current_dateTime("Date")})
 
         cT = current_dateTime("Time").split(":")[0]
-
+       
         hoursToday = system["hourly"][countFor]
 
         if countFor == "unit":
@@ -178,6 +195,16 @@ class systemHandler():
             count = system["accumulated"]["post_time"]
         elif countFor == "drive_time":
             count = system["accumulated"]["drive_time"]
+        elif countFor == "task_time":
+            onCallTime = system["accumulated"]["on_call_time"]
+            calls = system["accumulated"]["calls"]
+
+            if calls > 0:
+                count = round(onCallTime / calls)
+            else:
+                count = 0
+        elif countFor == "post_assignments":
+            count = system["accumulated"]["post_assignments"]
 
         for i in hoursToday:
             if i["time"] == f"{cT}:00":
@@ -228,15 +255,16 @@ class systemHandler():
 
         for item in allHourlyCounts:
             if item["valid"]:
-                for i in item["hourly"][countFor]:
-                    time = i["time"]
-                    today = i["today"]
+                if countFor in item["hourly"]:
+                    for i in item["hourly"][countFor]:
+                        time = i["time"]
+                        today = i["today"]
 
-                    for hour in hours:
-                        for k,v in hour.items():
-                            if time == k:
-                                if today != None:
-                                    v.append(today)
+                        for hour in hours:
+                            for k,v in hour.items():
+                                if time == k:
+                                    if today != None:
+                                        v.append(today)
 
         averageList = []
         # Get mean of each list in hours

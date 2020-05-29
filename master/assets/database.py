@@ -6,8 +6,15 @@ class mongoDatabase():
 
     def __init__(self):
         connected = self.connect()
+        
+        testing = False
+        if testing:
+            client = "test"
+        else:
+            client = "EMSAEastern"
+
         if connected:
-            self.db = self.client["test"]
+            self.db = self.client[client]
             self.liveWorkload = self.db["liveWorkload"]
             self.historicWorkload = self.db["historicWorkload"]
             self.system = self.db["System"]

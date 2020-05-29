@@ -71,6 +71,7 @@ class liveWorkloadHandler():
     @checkError 
     def unitStatus(self):
         for unit in self.csvData:
+            sos = unit["sos"]
             status = unit["status"]
             workload = unit["workload"]
             threshold = unit["threshold"]
@@ -78,15 +79,23 @@ class liveWorkloadHandler():
             above_current = unit["above_current"]
             late_call = unit["late_call"]
             past_eos = unit["past_eos"]
+            time_on_shift = unit["time_on_shift"]
+
+            drive_time = unit["drive_time"]
+            last_drive_time = unit["last_drive_time"]
+
             task_time = unit["task_time"]
             last_task_time = unit["last_task_time"]
-            drive_time = unit["drive_time"]
-            on_call_time = unit["on_call_time"]
+
             post_time = unit["post_time"]
             last_post_time = unit["last_post_time"]
             last_post = unit["last_post"]
+
             arrivals = unit["arrivals"]
             last_arrivals = unit["last_arrivals"]
+
+            post_assignments = unit["post_assignments"]
+            last_post_assignments = unit["last_post_assignments"]
 
             if threshold < self.max_threshold:
 
@@ -95,12 +104,13 @@ class liveWorkloadHandler():
                         status = "Late Call"
                     else:
                         status = "On Call"
-                    unit["on_call_time"]+=1
-                    self.system.accumulateToSystem("on_call_time")
+                    task_difference = (task_time - last_task_time)
+                    self.system.accumulateToSystem("on_call_time", task_difference)
                 elif post_time > last_post_time:
                     if threshold < 0.92:
                         status = "Posting"
-                        self.system.accumulateToSystem("post_time")
+                        post_difference = (post_time - last_post_time)
+                        self.system.accumulateToSystem("post_time", post_difference)
                     elif threshold >= 0.92 and threshold < 0.94:
                         status = "Fueling"
                     elif threshold >= 0.94 and threshold < self.max_threshold:
@@ -109,9 +119,16 @@ class liveWorkloadHandler():
                     unit["last_post"] = current_dateTime("Time")[0:5]
                 else:
                     if threshold < 0.92:
+                        drive_time = (time_on_shift - (task_time + post_time))
+                        
                         status = "Driving"
-                        unit["drive_time"]+=1
-                        self.system.accumulateToSystem("drive_time")
+
+                        drive_time_difference = (drive_time - last_drive_time)
+
+                        unit["drive_time"]+=drive_time_difference
+
+                        self.system.accumulateToSystem("drive_time", drive_time_difference)
+
                     elif threshold >= 0.92 and threshold < 0.94:
                         status = "Fueling"
                     elif threshold >= 0.94 and threshold < self.max_threshold:
@@ -142,18 +159,29 @@ class liveWorkloadHandler():
                 unit["late_call"] = True
                 msg = f"Unit {unit['unit']} Received Late Call"
                 self.notificationList.append(msg)
-                self.system.accumulateToSystem("late_call")
+                self.system.accumulateToSystem("late_call", None)
 
             if status == "Past EOS" and not past_eos:
                 unit["past_eos"] = True
                 msg = f"Unit {unit['unit']} Past EOS"
                 self.notificationList.append(msg)
-                self.system.accumulateToSystem("past_eos")
+                self.system.accumulateToSystem("past_eos", None)
             
             unit["status"] = status
 
             if arrivals > last_arrivals:
-                self.system.accumulateToSystem("calls")
+                arrivals_difference = (arrivals - last_arrivals)
+                self.system.accumulateToSystem("calls", arrivals_difference)
+
+            if post_assignments > last_post_assignments:
+                post_assignments_difference = (post_assignments - last_post_assignments)
+                self.system.accumulateToSystem("post_assignments", post_assignments_difference)
+
+            del unit["last_task_time"]
+            del unit["last_post_time"]
+            del unit["last_drive_time"]
+            del unit["last_post_assignments"]
+            del unit["last_arrivals"]
 
     @checkError
     def unitAverage(self):

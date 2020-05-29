@@ -38,7 +38,7 @@ class CSV():
             header = next(reader)
 
             filter_by_list = ['Unit', 'UnitStartTime', 'ActualTaskTimeUHU',
-                                'Arrivals', 'Textbox8', 'Crew', "PostAssignments"]
+                                'Arrivals', 'Textbox8', 'Crew', "PostAssignments", "ActualTimeOnShift"]
 
             ## Get index of param in csv list ##
             filter_by_list_index = [header.index(i) for i in filter_by_list]
@@ -71,6 +71,8 @@ class CSV():
 
                         post_assignments = int(row[filter_by_list_index[6]])
 
+                        time_on_shift = self.convert_to_minutes(row[filter_by_list_index[7]])
+
                         if len(crew) > 0:
                             crew = crew.split("&")
                             crew_member_one = crew[0]
@@ -91,11 +93,12 @@ class CSV():
                             late_call = unitExists["late_call"]
                             past_eos = unitExists["past_eos"]
                             drive_time = unitExists["drive_time"]
-                            on_call_time = unitExists["on_call_time"]
+                            last_drive_time = unitExists["drive_time"]
                             last_task_time = unitExists["task_time"]
                             last_post_time = unitExists["post_time"]
                             last_post = unitExists["last_post"]
                             last_arrivals = unitExists["arrivals"]
+                            last_post_assignments = unitExists["post_assignments"]
                         else:
                             status = None
                             above_max = False
@@ -103,11 +106,12 @@ class CSV():
                             late_call = False
                             past_eos = False
                             drive_time = 0
-                            on_call_time = 0
+                            last_drive_time = 0
                             last_task_time = 0
                             last_post_time = 0
                             last_post = 0
                             last_arrivals = 0
+                            last_post_assignments = 0
 
                         if unit[0] not in voidUnits:
                             self.csvData.append({
@@ -115,6 +119,7 @@ class CSV():
                                 "unit" : unit,
                                 "sos" : sos,
                                 "shift_average" : 0,
+                                "time_on_shift" : time_on_shift,
                                 "task_time" : task_time,
                                 "arrivals" : arrivals,
                                 "post_time" : post_time,
@@ -128,11 +133,12 @@ class CSV():
                                 "above_current" : above_current,
                                 "late_call" : late_call,
                                 "past_eos" : past_eos,
+                                "post_assignments" : post_assignments,
                                 "drive_time" : drive_time,
-                                "on_call_time" : on_call_time,
+                                "last_drive_time" : last_drive_time,
                                 "last_task_time" : last_task_time,
                                 "last_post_time" : last_post_time,
                                 "last_post" : last_post,
                                 "last_arrivals" : last_arrivals,
-                                "post_assignments" : post_assignments
+                                "last_post_assignments" : last_post_assignments
                             })
