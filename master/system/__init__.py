@@ -202,7 +202,13 @@ class systemHandler():
             if calls > 0:
                 count = round(onCallTime / calls)
             else:
-                count = 0
+                totalTaskTime = 0
+                totalArrivals = 0
+                # add up all task times and arrivals from live workload
+                for unit in self.liveWorkload.find({}):
+                    totalArrivals+=unit["task_time"]
+                    totalArrivals+=unit["arrivals"]
+                count = round(totalTaskTime / totalArrivals)
         elif countFor == "post_assignments":
             count = system["accumulated"]["post_assignments"]
 
