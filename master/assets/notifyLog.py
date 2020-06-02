@@ -52,16 +52,17 @@ class NotifyLog():
                 del msg
                 print(colored(f"[MESSAGE SENT] {self.data}", "yellow"))
                 
-            elif self.dataType == list:
-                for message in self.data:
-                    msg = MIMEMultipart()  # create a message
-                    msg['From'] = self.FROM_EMAIL
-                    msg['To'] = self.TO_EMAIL
-                    msg['Subject'] = "[SYSTEM ALERT]"
-                    msg.attach(MIMEText(message, 'plain'))
-                    self.server.send_message(msg)
-                    del msg
-                    print(colored(f"[MESSAGE SENT] {message}", "yellow"))
+            # STOP NOTIFICATIONS FOR EVERYTHING EXCEPT CSV FILE NOT FOUND
+            # elif self.dataType == list:
+            #     for message in self.data:
+            #         msg = MIMEMultipart()  # create a message
+            #         msg['From'] = self.FROM_EMAIL
+            #         msg['To'] = self.TO_EMAIL
+            #         msg['Subject'] = "[SYSTEM ALERT]"
+            #         msg.attach(MIMEText(message, 'plain'))
+            #         self.server.send_message(msg)
+            #         del msg
+            #         print(colored(f"[MESSAGE SENT] {message}", "yellow"))
 
             self.server.quit()
 

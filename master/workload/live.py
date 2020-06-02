@@ -159,7 +159,7 @@ class liveWorkloadHandler():
                 unit["late_call"] = True
                 msg = f"Unit {unit['unit']} Received Late Call"
                 self.notificationList.append(msg)
-                self.system.accumulateToSystem("late_call", 1)
+                self.system.accumulateToSystem("late_calls", 1)
 
             if status == "Past EOS" and not past_eos:
                 unit["past_eos"] = True
@@ -214,5 +214,7 @@ class liveWorkloadHandler():
                 self.liveWorkload.insert_one(unit)
 
                 type = "New"
+
+                self.system.accumulateToSystem("units", 1)
 
             print(colored(f"--> Unit {unit['unit']} - Type: {type}", "yellow"))
