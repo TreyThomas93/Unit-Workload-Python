@@ -200,7 +200,10 @@ class systemHandler():
             calls = system["accumulated"]["calls"]
 
             if f"{cT}:00" != "00:00":
-                count = round(onCallTime / calls)
+                if calls != 0:
+                    count = round(onCallTime / calls)
+                else:
+                    count = 0
             else:
                 totalTaskTime = 0
                 totalArrivals = 0
