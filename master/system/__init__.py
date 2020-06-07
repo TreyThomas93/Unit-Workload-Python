@@ -208,7 +208,10 @@ class systemHandler():
                 for unit in self.liveWorkload.find({}):
                     totalArrivals+=unit["task_time"]
                     totalArrivals+=unit["arrivals"]
-                count = round(totalTaskTime / totalArrivals)
+                if totalArrivals != 0:
+                    count = round(totalTaskTime / totalArrivals)
+                else:
+                    count = 0
         elif countFor == "post_assignments":
             count = system["accumulated"]["post_assignments"]
 
