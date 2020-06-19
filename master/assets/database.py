@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from assets.env import uri
+from assets.env import uri, client
 from termcolor import colored
 
 class mongoDatabase():
@@ -7,18 +7,9 @@ class mongoDatabase():
     def __init__(self):
         connected = self.connect()
         
-        testing = False
-        if testing:
-            client = "test"
-        else:
-            client = "EMSAEastern"
-
         if connected:
             self.db = self.client[client]
             self.liveWorkload = self.db["liveWorkload"]
-            self.historicWorkload = self.db["historicWorkload"]
-            self.system = self.db["System"]
-            self.master = self.db["Master"]
 
     def connect(self):
         try:
