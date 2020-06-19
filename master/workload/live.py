@@ -9,18 +9,57 @@ from random import randint
 
 class liveWorkloadHandler():
 
-    def __init__(self, liveWorkload):
+    def __init__(self, liveWorkload, system):
         self.max_threshold = 1
         self.max_task = 70
         self.liveWorkload = liveWorkload
+        self.system = system
 
     @checkError
     def __call__(self, Data):
         self.Data = Data
 
+        print("DROPPED SYSTEM")
+        self.system.drop()
+
         self.unitWorkload()
         self.unitStatus()
         self.commitLiveWorkload()
+
+    @checkError
+    def snapShot(self):
+        driving = self.liveWorkload.find({"status": "Driving"}).count()
+        posting = self.liveWorkload.find({"status": "Posting"}).count()
+        sos = self.liveWorkload.find({"status": "SOS"}).count()
+
+        level = driving + posting + sos
+
+        obj = {
+            "driving": driving,
+            "posting": posting,
+            "level": level,
+            "log": None
+        }
+
+        return obj
+
+    @checkError
+    def Log(self, toLog):
+
+        systemFound = self.system.find_one({"date": "06/19/20"})
+
+        if not systemFound:
+            self.system.insert_one({
+                "date": "06/19/20",
+                "logs": []
+            })
+
+        obj = self.snapShot()
+
+        obj["log"] = f"{toLog} - {current_dateTime('Time')}"
+
+        self.system.update_one({"date": "06/19/20"},
+                               {"$push": {"logs": obj}}, upsert=False)
 
     @checkError
     def unitWorkload(self):
@@ -47,7 +86,7 @@ class liveWorkloadHandler():
 
             # Set Max Threshold and Determine Current Threshold
             current_threshold = (self.max_threshold / 12) * \
-                                 round(float(hours_diff), 2)
+                round(float(hours_diff), 2)
 
             # Check If Arrivals Above Zero
             if arrivals > 0:
@@ -99,19 +138,30 @@ class liveWorkloadHandler():
             elif unit["status"] == "On Call":
                 unit["task_time"] += 1
 
+            if unit["status"] == "Late Call":
+                log = f"Unit {unit['unit']} Received Late Call"
+                self.Log(log)
+            elif unit["status"] == "Past EOS":
+                log = f"Unit {unit['unit']} Past EOS"
+                self.Log(log)
+
+            if unit["workload"] >= self.max_threshold:
+                log = f"Unit {unit['unit']} Above Max Threshold"
+                self.Log(log)
+
     @checkError
     def purgeAll(self):
-        print("DROPPED!")
+        print("DROPPED LIVE WORKLOAD")
         self.liveWorkload.drop()
 
     @checkError
     def commitLiveWorkload(self):
         self.purgeAll()
         for unit in self.Data:
-            unitExists = self.liveWorkload.find_one({"unit" : unit["unit"]})
+            unitExists = self.liveWorkload.find_one({"unit": unit["unit"]})
             if unitExists:
-                self.liveWorkload.update_one({"unit" : unit["unit"]}, 
-                {"$set": unit}, upsert=True)
+                self.liveWorkload.update_one({"unit": unit["unit"]},
+                                             {"$set": unit}, upsert=True)
 
                 type = "Existing"
             else:

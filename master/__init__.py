@@ -18,10 +18,11 @@ class Master():
 
         self.mongo = mongoDatabase()
         self.liveWorkload = self.mongo.liveWorkload
+        self.system = self.mongo.system
 
         self.fakeData = GenerateFakeData(self.liveWorkload)
 
-        self.liveWorkloadHandler = liveWorkloadHandler(self.liveWorkload)
+        self.liveWorkloadHandler = liveWorkloadHandler(self.liveWorkload, self.system)
 
     @checkError
     def listen(self):

@@ -10,6 +10,7 @@ class mongoDatabase():
         if connected:
             self.db = self.client[client]
             self.liveWorkload = self.db["liveWorkload"]
+            self.system = self.db["system"]
 
     def connect(self):
         try:
