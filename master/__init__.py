@@ -36,9 +36,13 @@ class Master():
 
         end = time.perf_counter()
 
+        Data.clear()
+
         print(colored(
             f"\n--> Cycle Complete - {current_dateTime()} - Took {round(end-start, 2)} second(s)\n", "yellow"))
 
 if __name__ == "__main__":
     master = Master()
-    master.listen()
+    while True:
+        master.listen()
+        time.sleep(60)

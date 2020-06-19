@@ -11,6 +11,7 @@ pymongo = "*"
 dnspython = "*"
 pprint = "*"
 termcolor = "*"
+names = "*"
 
 [requires]
 python_version = "3.8"

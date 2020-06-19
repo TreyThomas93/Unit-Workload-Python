@@ -3,7 +3,9 @@ from random import randint
 from assets.currentDatetime import current_dateTime
 from assets.errorHandler import checkError
 
+
 from datetime import datetime
+import names
 
 
 class GenerateFakeData():
@@ -38,9 +40,9 @@ class GenerateFakeData():
         if avg_task < 40 or avg_task > 80:
             return None
 
-        print(f"\nTASK TIME: {task_time}")
-        print(f"ARRIVALS: {arrivals}")
-        print(f"AVG TASK: {avg_task}")
+        # print(f"\nTASK TIME: {task_time}")
+        # print(f"ARRIVALS: {arrivals}")
+        # print(f"AVG TASK: {avg_task}")
 
         remaining = time_on_shift - task_time
 
@@ -48,33 +50,26 @@ class GenerateFakeData():
 
         drive_time = remaining - post_time
 
-        print(f"REMAINING: {remaining}")
-        print(f"POST TIME: {post_time}")
-        print(f"DRIVE TIME: {drive_time}\n")
-        
+        # print(f"REMAINING: {remaining}")
+        # print(f"POST TIME: {post_time}")
+        # print(f"DRIVE TIME: {drive_time}\n")
+
         return (round(task_time), round(post_time), round(drive_time))
 
     @checkError
     def generateData(self):
-        unitStatus = [
-            "On Call",
-            "Posting",
-            "Driving"
-        ]
-
         current_time = current_dateTime("Time")
-        unitNumber = 1
         max_limit = int(current_time[0:2])
         min_limit = int(current_time[0:2]) - 12
         if min_limit < 4:
             min_limit = 4
+        checkExisting = []
         while len(self.Data) < 20:
-            unit = f"{unitNumber}"
-            unitNumber += 1
+            unit = randint(10, 50)
 
             sos = f"{randint(min_limit, max_limit)}:00:00"
             time_on_shift = self.getTimeOnShift(sos)
-            status = unitStatus[randint(0, len(unitStatus) - 1)]
+
             arrivals = randint(0, 10)
 
             response = self.getTimes(arrivals, time_on_shift)
@@ -85,20 +80,18 @@ class GenerateFakeData():
                 post_time = response[1]
                 drive_time = response[2]
 
-                if status == "Posting":
-                    post_time+=1
-                elif status == "Drive Time":
-                    drive_time+=1
-                elif status == "On Call":
-                    task_time+=1
-
                 if drive_time > 0:
                     post_assignments = randint(1, 15)
+                    if drive_time / post_assignments == 4:
+                        continue
                 else:
                     post_assignments = 0
 
-                crew_member_one = "Doe, John"
-                crew_member_two = "Doe, Jane"
+                crew_member_one = names.get_full_name().split(" ")
+                crew_member_two = names.get_full_name().split(" ")
+
+                crew_member_one = f"{crew_member_one[1]}, {crew_member_one[0]}"
+                crew_member_two = f"{crew_member_two[1]}, {crew_member_two[0]}"
 
                 data = {
                     "updated_at": current_time,
@@ -113,10 +106,12 @@ class GenerateFakeData():
                     "workload": 0,
                     "threshold": 0,
                     "ratio": 0,
-                    "status": status,
+                    "status": None,
                     "post_assignments": post_assignments,
                     "drive_time": drive_time
                 }
 
-                print(f"{unit} Added!")
-                self.Data.append(data)
+                if unit not in checkExisting:
+                    self.Data.append(data)
+                    checkExisting.append(unit)
+                    print(f"{unit} Added!")
