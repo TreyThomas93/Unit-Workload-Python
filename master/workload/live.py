@@ -32,12 +32,12 @@ class liveWorkloadHandler():
         else:
             self.makeLevelZero = False
 
-        if self.makeLevelZero:
-            self.levelZero()
-
         self.unitWorkload()
         self.unitStatus()
         self.commitLiveWorkload()
+        
+        if self.makeLevelZero:
+            self.levelZero()
 
     @checkError
     def levelZero(self):
