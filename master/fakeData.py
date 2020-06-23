@@ -4,7 +4,7 @@ from assets.currentDatetime import current_dateTime
 from assets.errorHandler import checkError
 
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import names
 
 
@@ -59,17 +59,21 @@ class GenerateFakeData():
     @checkError
     def generateData(self):
         current_time = current_dateTime("Time")
-        max_limit = int(current_time[0:2])
-        if max_limit > 20 or max_limit < 4:
-            max_limit = 20
-        min_limit = int(current_time[0:2]) - 12
-        if min_limit < 4:
-            min_limit = 4
+
+        # set min/max for sos times
+        min_limit = 4
+        max_limit = 20
+
+        newMin = int(str(datetime.strptime(current_time, "%H:%M:%S") - timedelta(hours=13)).split(" ")[1][0:2])
+
+        if newMin < min_limit or newMin > max_limit:
+            newMin = max_limit
+
         checkExisting = []
         while len(self.Data) < 20:
             unit = randint(10, 50)
             
-            sos = f"{randint(min_limit, max_limit)}:00:00"
+            sos = f"{randint(newMin, max_limit)}:00:00"
             time_on_shift = self.getTimeOnShift(sos)
 
             arrivals = randint(0, 10)
