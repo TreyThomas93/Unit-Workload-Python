@@ -15,6 +15,9 @@ class liveWorkloadHandler():
         self.liveWorkload = liveWorkload
         self.system = system
 
+        self.cycleNumber = 0
+        self.makeLevelZero = False
+
     @checkError
     def __call__(self, Data):
         self.Data = Data
@@ -22,9 +25,24 @@ class liveWorkloadHandler():
         print("DROPPED SYSTEM")
         self.system.drop()
 
+        self.cycleNumber+=1
+
+        if (self.cycleNumber % 5 == 0):
+            self.makeLevelZero = True
+        else:
+            self.makeLevelZero = False
+
+        if self.makeLevelZero:
+            self.levelZero()
+
         self.unitWorkload()
         self.unitStatus()
         self.commitLiveWorkload()
+
+    @checkError
+    def levelZero(self):
+        log = "System is Level Zero"
+        self.Log(log)
 
     @checkError
     def snapShot(self):
@@ -148,6 +166,9 @@ class liveWorkloadHandler():
             if unit["workload"] >= self.max_threshold:
                 log = f"Unit {unit['unit']} Above Max Threshold"
                 self.Log(log)
+
+            if self.makeLevelZero:
+                unit["status"] = "On Call"
 
     @checkError
     def purgeAll(self):
