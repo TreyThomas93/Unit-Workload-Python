@@ -65,9 +65,11 @@ class GenerateFakeData():
         min_limit = int(str(datetime.strptime(
             current_time, "%H:%M:%S") - timedelta(hours=13)).split(" ")[1][0:2])
 
-        if min_limit >= max_limit and (max_limit > 20 and max_limit < 4):
+        if min_limit >= max_limit and (max_limit > 20 or max_limit < 4):
             min_limit = 0
         elif max_limit >= 4 and max_limit < 13:
+            min_limit = 4
+        elif min_limit < 4 and min_limit >= 0:
             min_limit = 4
 
         print(f"MAX: {max_limit}")
