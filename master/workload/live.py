@@ -167,7 +167,7 @@ class liveWorkloadHandler():
                 log = f"Unit {unit['unit']} Above Max Threshold"
                 self.Log(log)
 
-            if self.makeLevelZero:
+            if self.makeLevelZero and unit["status"] != "Past EOS":
                 unit["status"] = "On Call"
 
     @checkError
