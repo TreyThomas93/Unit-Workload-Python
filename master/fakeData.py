@@ -60,20 +60,24 @@ class GenerateFakeData():
     def generateData(self):
         current_time = current_dateTime("Time")
 
-        # set min/max for sos times
-        min_limit = 4
-        max_limit = 20
+        max_limit = int(current_time[0:2])
 
-        newMin = int(str(datetime.strptime(current_time, "%H:%M:%S") - timedelta(hours=13)).split(" ")[1][0:2])
+        min_limit = int(str(datetime.strptime(
+            current_time, "%H:%M:%S") - timedelta(hours=13)).split(" ")[1][0:2])
 
-        if newMin < min_limit or newMin > max_limit:
-            newMin = max_limit
+        if min_limit >= max_limit and (max_limit > 20 and max_limit < 4):
+            min_limit = 0
+        elif max_limit >= 4 and max_limit < 13:
+            min_limit = 4
+
+        print(f"MAX: {max_limit}")
+        print(f"MIN: {min_limit}")
 
         checkExisting = []
         while len(self.Data) < 20:
             unit = randint(10, 50)
-            
-            sos = f"{randint(newMin, max_limit)}:00:00"
+
+            sos = f"{randint(min_limit, max_limit)}:00:00"
             time_on_shift = self.getTimeOnShift(sos)
 
             arrivals = randint(0, 10)
