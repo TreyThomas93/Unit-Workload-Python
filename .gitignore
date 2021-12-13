@@ -1,6 +1,4 @@
-env.py
+*.env
 .vscode
 *__pycache__
 .VSCodeCounter
-csvTestFile.csv
-testSystem.py
