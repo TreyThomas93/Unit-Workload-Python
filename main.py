@@ -1,9 +1,12 @@
-import names
 from random import randint
 from pprint import pprint
 from units import Unit
 from assets.datetimeTZ import datetime_tz
-from datetime import datetime, timedelta
+from datetime import datetime
+from unit_data import units
+import pandas as pd
+from tabulate import tabulate
+import matplotlib.pyplot as plt
 
 class Main:
 
@@ -15,7 +18,7 @@ class Main:
             unit = Unit(value["crew"], unit_number, value["sos"])
             self.units.append(unit)
 
-    def generateData(self):
+    def generateDataForUnits(self):
         for unit in self.units:
             minutes_from_start =(datetime.strptime(datetime_tz().split(" ")[-1], '%H:%M:%S') - datetime.strptime(unit.start_of_shift, '%H:%M:%S')).total_seconds() // 60
             while True:
@@ -40,38 +43,15 @@ class Main:
 
 if __name__ == '__main__':
     main = Main()
-
-    _names = [names.get_full_name() for _ in range(62)]
-    i = 2
-    crew_members = []
-    for _ in range(int(len(_names)/2)):
-        crew = tuple(_names[i-2:i])
-        crew_members.append(crew)
-        i+=2
-
-    units = []
-    while len(units) <= (len(crew_members)):
-        unit = randint(101, 149)
-        if unit not in units:
-            units.append(unit)
-
-    start_times = []
-    while len(start_times) <= (len(crew_members)):
-        sos = randint(4, 20)
-        if sos < 10:
-            sos = f"0{sos}:00:00"
-        else:
-            sos = f"{sos}:00:00"
-        eos = (datetime.strptime(sos, "%H:%M:%S") + timedelta(hours=12)).strftime("%H:%M:%S")
-        if sos <= datetime_tz().split(" ")[-1] <= eos:
-            start_times.append(sos)
-
-    units = {unit:{"crew" : names, "sos" : sos} for unit, names, sos in zip(units, crew_members, start_times)}
     main.createUnitObjects(units)
-    main.generateData()
+    main.generateDataForUnits()
 
     for unit in main.units:
         unit.unitWorkload()
-        if unit.unit_data["current_workload"] >= Unit.max_threshold:
-            print(unit.start_of_shift)
-            pprint(unit.unit_data)
+
+    units = sorted(main.units, key = lambda i: i.unit_data['current_threshold'])
+
+    # units = [{"Unit" : unit.unit_number, "Crew" : ", ".join(unit.crew), "Current_Workload" : unit.unit_data["current_workload"], "Task_Time" : unit.unit_data["task_time"], "Post_Time" : unit.unit_data["post_time"], "Arrivals" : unit.unit_data["arrivals"]} for unit in units]
+    # df = pd.DataFrame(units)
+    # df = df.set_index("Unit")
+    # print(tabulate(df, showindex=True, headers=df.columns))

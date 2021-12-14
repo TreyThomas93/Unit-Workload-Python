@@ -11,6 +11,9 @@ pymongo = "*"
 dnspython = "*"
 termcolor = "*"
 names = "*"
+pandas = "*"
+jinja2 = "*"
+tabulate = "*"
 
 [requires]
 python_version = "3.8"
